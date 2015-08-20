@@ -1,6 +1,9 @@
 '''
 User module only for import
 '''
+from atcatalog import app
+
+
 @app.route('/login')
 def login():
     '''
