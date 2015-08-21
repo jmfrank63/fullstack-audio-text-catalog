@@ -23,7 +23,7 @@ class Test_flask_routes(unittest.TestCase):
         '''
         test_client = app.test_client(self)
         response = test_client.get('/languages/', content_type='html/text')
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
     def test_status_language(self):
         '''
