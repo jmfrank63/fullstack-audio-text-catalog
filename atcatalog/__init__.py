@@ -5,5 +5,6 @@ from flask import Flask
 
 app = Flask(__name__)
 
-import atcatalog.languages
-import atcatalog.users
+import atcatalog.views.publang
+import atcatalog.views.userlang
+import atcatalog.views.users
