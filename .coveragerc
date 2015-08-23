@@ -1,0 +1,5 @@
+[run]
+source =
+    /home/ubuntu/workspace/
+omit = 
+    run.py
