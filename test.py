@@ -42,6 +42,50 @@ class Test_status_routes(unittest.TestCase):
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
+    def test_status_show_text_index(self):
+        ''' Test of status code of lang '/lang/<int:lid>/text/<int:tid>'
+        '''
+        test_client = app.test_client(self)
+        lid = randint(1, 100)
+        tid = randint(1, 100)
+        response = test_client.get('/lang/{0}/text/{1}/'.format(lid, tid),
+                                   content_type='html/text')
+        self.assertEqual(response.status_code, 200)
+
+    def test_status_show_text_both(self):
+        ''' Test of status code of lang '/lang/<int:lid>/text/<int:tid>/both'
+        '''
+        test_client = app.test_client(self)
+        lid = randint(1, 100)
+        tid = randint(1, 100)
+        response = test_client.get('/lang/{0}/text/{1}/both/'.format(lid, tid),
+                                   content_type='html/text')
+        self.assertEqual(response.status_code, 200)
+        
+    def test_status_show_text_writing(self):
+        ''' Test of status code of lang
+        '/lang/<int:lid>/text/<int:tid>/writing'
+        '''
+        test_client = app.test_client(self)
+        lid = randint(1, 100)
+        tid = randint(1, 100)
+        response = test_client.get('/lang/{0}/text/{1}/writing/'
+                                   .format(lid, tid),
+                                   content_type='html/text')
+        self.assertEqual(response.status_code, 200)
+
+    def test_status_show_text_audio(self):
+        ''' Test of status code of lang
+        '/lang/<int:lid>/text/<int:tid>/audio'
+        '''
+        test_client = app.test_client(self)
+        lid = randint(1, 100)
+        tid = randint(1, 100)
+        response = test_client.get('/lang/{0}/text/{1}/audio/'
+                                   .format(lid, tid),
+                                   content_type='html/text')
+        self.assertEqual(response.status_code, 200)
+
     def test_status_show_user_index(self):
         ''' Test of status code of lang
         '/user/<int:uid>/'
