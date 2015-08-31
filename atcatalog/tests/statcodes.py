@@ -6,9 +6,9 @@ from random import randint
 import unittest
 
 
-class Test_status_routes(unittest.TestCase):
+class TestPublcStatusCodes(unittest.TestCase):
     '''
-    Testing status codes of flask routes
+    Testing public status codes
     '''
     def test_status_index(self):
         ''' Test of status code of main '/' route
@@ -17,14 +17,14 @@ class Test_status_routes(unittest.TestCase):
         response = test_client.get('/', content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_langs(self):
+    def test_status_langs(self):
         ''' Test of status code of langs '/langs' route
         '''
         test_client = app.test_client(self)
         response = test_client.get('/langs/', content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_lang(self):
+    def test_status_lang(self):
         ''' Test of status code of lang '/lang/<int:lid>'
         '''
         test_client = app.test_client(self)
@@ -33,7 +33,7 @@ class Test_status_routes(unittest.TestCase):
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_lang_texts(self):
+    def test_status_lang_texts(self):
         ''' Test of status code of lang '/lang/<int:lid>/texts'
         '''
         test_client = app.test_client(self)
@@ -42,7 +42,7 @@ class Test_status_routes(unittest.TestCase):
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_text_index(self):
+    def test_status_text_index(self):
         ''' Test of status code of lang '/lang/<int:lid>/text/<int:tid>'
         '''
         test_client = app.test_client(self)
@@ -52,7 +52,7 @@ class Test_status_routes(unittest.TestCase):
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_text_both(self):
+    def test_status_text_both(self):
         ''' Test of status code of lang '/lang/<int:lid>/text/<int:tid>/both'
         '''
         test_client = app.test_client(self)
@@ -61,8 +61,8 @@ class Test_status_routes(unittest.TestCase):
         response = test_client.get('/lang/{0}/text/{1}/both/'.format(lid, tid),
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
-        
-    def test_status_show_text_writing(self):
+
+    def test_status_text_writing(self):
         ''' Test of status code of lang
         '/lang/<int:lid>/text/<int:tid>/writing'
         '''
@@ -74,7 +74,7 @@ class Test_status_routes(unittest.TestCase):
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_text_audio(self):
+    def test_status_text_audio(self):
         ''' Test of status code of lang
         '/lang/<int:lid>/text/<int:tid>/audio'
         '''
@@ -86,7 +86,12 @@ class Test_status_routes(unittest.TestCase):
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_user_index(self):
+
+class UserStatusCodes(unittest.TestCase):
+    '''
+    Test the user specific routes
+    '''
+    def test_status_user_index(self):
         ''' Test of status code of lang
         '/user/<int:uid>/'
         '''
@@ -106,7 +111,7 @@ class Test_status_routes(unittest.TestCase):
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_user_lang_texts(self):
+    def test_status_user_lang_texts(self):
         ''' Test of status code of lang
         '/user/<int:uid>/lang/<int:lid>/texts/'
         '''
@@ -118,7 +123,7 @@ class Test_status_routes(unittest.TestCase):
                 content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_user_lang_index(self):
+    def test_status_user_lang_index(self):
         ''' Test of status code of lang
         '/user/<int:uid>/lang/<int:lid>/'
         '''
@@ -208,7 +213,7 @@ class Test_status_routes(unittest.TestCase):
                 content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_user_text_index(self):
+    def test_status_user_text_index(self):
         ''' Test of status code of showing a text with both audio and writing
         '/user/<int:uid>/lang/<int:lid>/text/<int:tid>/'
         '''
@@ -222,7 +227,7 @@ class Test_status_routes(unittest.TestCase):
                 content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_user_text_both(self):
+    def test_status_user_text_both(self):
         ''' Test of status code of showing a text with both audio and writing
         '/user/<int:uid>/lang/<int:lid>/text/<int:tid>/both/'
         '''
@@ -236,7 +241,7 @@ class Test_status_routes(unittest.TestCase):
                 content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_user_text_writing(self):
+    def test_status_user_text_writing(self):
         ''' Test of status code of showing a text writing
         '/user/<int:uid>/lang/<int:lid>/text/<int:tid>/writing/'
         '''
@@ -250,7 +255,7 @@ class Test_status_routes(unittest.TestCase):
                 content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    def test_status_show_user_text_audio(self):
+    def test_status_user_text_audio(self):
         ''' Test of status code of showing a text audio
         '/user/<int:uid>/lang/<int:lid>/text/<int:tid>/audio/'
         '''

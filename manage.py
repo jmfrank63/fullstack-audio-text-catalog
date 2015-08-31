@@ -1,21 +1,24 @@
 #!/usr/bin/env python
-from flask.ext.script import Manager, Shell, Server
+''' Mangager script for flask. '''
+# from flask.ext.script import Manager, Shell, Server
+from flask_script import Manager, Shell, Server
 from os import getenv
 from atcatalog import app
 
 
 # get server address from environment
-ip = getenv('IP', '0.0.0.0')
-port  = getenv('PORT', '8080')
+IP = getenv('IP', '0.0.0.0')
+PORT = getenv('PORT', '8080')
 
 
-# create manager
-manager = Manager(app)
+def main():
+    '''The main entry point'''
+    manager = Manager(app)
 
-manager.add_command('run', Server(ip, port) )
-manager.add_command('shell', Shell())
-
+    manager.add_command('run', Server(IP, PORT))
+    manager.add_command('shell', Shell())
+    manager.run()
 
 if __name__ == '__main__':
-    manager.run()
+    main()
 
