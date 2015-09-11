@@ -6,7 +6,7 @@ from random import randint
 import unittest
 
 
-class TestPublcStatusCodes(unittest.TestCase):
+class TestPublicStatusCodes(unittest.TestCase):
     '''
     Testing public status codes
     '''

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 ''' Mangager script for flask. '''
 # from flask.ext.script import Manager, Shell, Server
-from flask_script import Manager, Shell, Server
+from flask.ext.script import Manager, Shell, Server, Command
 from werkzeug.contrib.fixers import ProxyFix
 
-from os import getenv
+from os import getenv, system
 from atcatalog import app
 
 
@@ -12,6 +12,12 @@ from atcatalog import app
 IP = getenv('IP', '0.0.0.0')
 PORT = getenv('PORT', '8080')
 SECRET = getenv('FLASK_SECRET', 'udacity_super_secret_key')
+
+class Test(Command):
+    '''Runs the testsuite'''
+    def run(self):
+        print "Running TestSuite:"
+        system("python ./atcatalog/tests/statcodes.py")
 
 def main():
     '''The main entry point'''
@@ -22,6 +28,7 @@ def main():
 
     manager.add_command('run', Server(IP, PORT))
     manager.add_command('shell', Shell())
+    manager.add_command('test', Test())
     manager.run()
 
 if __name__ == '__main__':
