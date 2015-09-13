@@ -13,11 +13,6 @@ IP = getenv('IP', '0.0.0.0')
 PORT = getenv('PORT', '8080')
 SECRET = getenv('FLASK_SECRET', 'udacity_super_secret_key')
 
-class Test(Command):
-    '''Runs the testsuite'''
-    def run(self):
-        print "Running TestSuite:"
-        system("python ./atcatalog/tests/statcodes.py")
 
 def main():
     '''The main entry point'''
@@ -26,9 +21,13 @@ def main():
     app.debug = True
     manager = Manager(app)
 
+    @manager.command
+    def test():
+        print "Running TestSuite:"
+        system("python ./atcatalog/tests/statcodes.py")
+
     manager.add_command('run', Server(IP, PORT))
     manager.add_command('shell', Shell())
-    manager.add_command('test', Test())
     manager.run()
 
 if __name__ == '__main__':
