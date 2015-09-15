@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ''' Mangager script for flask. '''
 # from flask.ext.script import Manager, Shell, Server
-from flask.ext.script import Manager, Shell, Server, Command
+from flask_script import Manager, Shell, Server, Command
 from werkzeug.contrib.fixers import ProxyFix
 
 from os import getenv, system
@@ -23,7 +23,8 @@ def main():
 
     @manager.command
     def test():
-        print "Running TestSuite:"
+        ''' Test command '''
+        print "Testing status codes:"
         system("python ./atcatalog/tests/statcodes.py")
 
     manager.add_command('run', Server(IP, PORT))

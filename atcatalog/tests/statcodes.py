@@ -10,6 +10,7 @@ class TestPublicStatusCodes(unittest.TestCase):
     '''
     Testing public status codes
     '''
+
     def test_status_index(self):
         ''' Test of status code of main '/' route
         '''
@@ -53,7 +54,8 @@ class TestPublicStatusCodes(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_status_text_both(self):
-        ''' Test of status code of lang '/lang/<int:lid>/text/<int:tid>/both'
+        ''' Test of status code of lang 
+        '/lang/<int:lid>/text/<int:tid>/both'
         '''
         test_client = app.test_client(self)
         lid = randint(1, 100)

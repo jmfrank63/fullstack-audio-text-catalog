@@ -2,6 +2,7 @@
 Public lang views
 '''
 from atcatalog import app
+from flask import render_template
 
 
 @app.route('/')
@@ -9,7 +10,7 @@ from atcatalog import app
 def show_langs():
     ''' Show the languages the user owns and can change
     '''
-    return "Here all languages are shown"
+    return render_template('index.html')
 
 
 @app.route('/lang/<int:lid>/')
@@ -18,5 +19,4 @@ def show_lang(lid):
     '''
     Show the content of the user language
     '''
-    return "Here the content of language with id {0} is shown".\
-        format(lid)
+    return render_template('publang.html', lid=lid)
