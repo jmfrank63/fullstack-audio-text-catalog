@@ -1,5 +1,5 @@
 '''
-User module only for import
+Users module for login and logout
 '''
 from atcatalog import app
 
