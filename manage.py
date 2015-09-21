@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 ''' Mangager script for flask. '''
-# from flask.ext.script import Manager, Shell, Server
-from flask_script import Manager, Shell, Server, Command
+from flask.ext.script import Manager, Shell, Server
 from werkzeug.contrib.fixers import ProxyFix
 
 from os import getenv, system
