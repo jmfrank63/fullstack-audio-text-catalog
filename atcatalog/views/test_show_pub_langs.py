@@ -9,4 +9,6 @@ class TestShow_pub_langs(TestCase):
         '''
         Test the return status code.
         '''
-        self.fail()
+        test_client = app.test_client(self)
+        response = test_client.get('/langs/', content_type='html/text')
+        self.assertEqual(response.status_code, 200)
