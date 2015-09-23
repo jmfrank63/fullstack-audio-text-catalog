@@ -9,7 +9,7 @@ __author__ = 'johannesfrank'
 
 
 class TestPub_langs(TestCase):
-    def test_pub_langs_statuscode(self):
+    def test_status_code(self):
         '''
         Test the return status code.
         '''
@@ -19,7 +19,7 @@ class TestPub_langs(TestCase):
 
 
 class TestPub_lang(TestCase):
-    def test_pub_lang(self):
+    def test_status_code(self):
         '''
         Test the return status code
         '''

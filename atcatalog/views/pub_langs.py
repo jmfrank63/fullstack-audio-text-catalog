@@ -14,7 +14,7 @@ def pub_langs():
     '''
     languages = {0: 'english', 1: 'spanish', 2: 'french', 3: 'german',
                  4: 'portuguese'}
-    login_link = url_for(login)
+    login_link = '' #url_for(login)
     return render_template('pubLangs.html', langs=languages, login=login_link)
 
 

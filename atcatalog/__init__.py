@@ -5,7 +5,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
-import atcatalog.views.pub_lang
+import atcatalog.views.pub_langs
 import atcatalog.views.pub_text
 import atcatalog.views.user_lang
 import atcatalog.views.user_text
