@@ -1,7 +1,7 @@
 '''
 Test cases for the public languages pages
 '''
-from unittest import TestCase
+from unittest import TestCase, main
 from atcatalog import app
 from random import randint
 
@@ -28,3 +28,7 @@ class TestPub_lang(TestCase):
         response = test_client.get('/lang/{0}/'.format(lid),
                                    content_type='html/text')
         self.assertEqual(response.status_code, 200)
+
+
+if __name__ == '__main__':
+    main()
