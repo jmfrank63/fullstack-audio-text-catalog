@@ -23,7 +23,7 @@ class Test(Command):
         '''
         print 'Testing status codes:'
 #        system('python ./atcatalog/views/test_pub_langs.py')
-        testsuite = unittest.TestLoader().discover('./atcatalog/views')
+        testsuite = unittest.TestLoader().discover('.')
         unittest.TextTestRunner(verbosity=1).run(testsuite)
 
 def main():
