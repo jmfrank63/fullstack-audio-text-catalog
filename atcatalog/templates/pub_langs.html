@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Languages</title>
+</head>
+    <body>
+        <a href="{{ login }}" >Login</a>
+        <h1>Here all public languages are shown!</h1>
+        <h2>Languages:</h2>
+        <ul>
+        {% for key, value in langs.items() %}
+            <li>
+                <a href="{{ url_for('pub_lang', lid=key) }}">
+                    {{ value.capitalize() }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>

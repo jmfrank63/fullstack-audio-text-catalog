@@ -5,8 +5,8 @@ from flask import Flask
 
 app = Flask(__name__)
 
-import atcatalog.views.pub_langs
-import atcatalog.views.pub_text
-import atcatalog.views.user_lang
-import atcatalog.views.user_text
-import atcatalog.views.users
+import atcatalog.views.publangs
+import atcatalog.views.pubsents
+import atcatalog.views.userlang
+import atcatalog.views.usersents
+import atcatalog.views.userauth
