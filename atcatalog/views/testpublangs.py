@@ -4,7 +4,7 @@ Test cases for the public languages pages
 from unittest import TestCase, main
 from atcatalog import app
 from random import randint
-from atcatalog.langdata.lang_dicts import languages
+from atcatalog.langdata.lang_dicts import language
 
 __author__ = 'johannesfrank'
 
@@ -15,21 +15,21 @@ class TestPubLangs(TestCase):
 
     def test_status_code(self):
         '''
-        Test the return status code of public languages.
+        Test the return status code of public language.
         '''
         response = self.test_client.get('/langs/', content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
     def test_page_loads(self):
         '''
-        Test that the public languages site actually loads.
+        Test that the public language site actually loads.
         '''
         response = self.test_client.get('/langs/', content_type='html/text')
         self.assertIn('<title>Public Languages</title>', response.data)
 
     def test_languages_show(self):
         '''
-        Test that languages actually show up on page
+        Test that language actually show up on page
         '''
 
 

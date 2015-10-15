@@ -3,17 +3,17 @@ Public languages views
 '''
 from atcatalog import app
 from flask import render_template, url_for
-from atcatalog.langdata.lang_dicts import languages
+from atcatalog.langdata.lang_dicts import language
 
 
 @app.route('/')
 @app.route('/langs/')
 def pub_langs():
-    ''' Show all public languages
+    ''' Show all public language
     Link to the user login and the content of each language
     '''
     login_link = url_for('login')
-    return render_template('publangs.html', langs=languages, login=login_link)
+    return render_template('publangs.html', langs=language, login=login_link)
 
 
 @app.route('/lang/<int:lid>/')

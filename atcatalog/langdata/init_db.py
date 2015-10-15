@@ -72,6 +72,6 @@ class Sentence(Base):
 
 ################### insert at end of file ############
 
-engine = create_engine('sqlite:///languages.db')
+engine = create_engine('sqlite:///language.db')
 Base.metadata.create_all(engine)
 
