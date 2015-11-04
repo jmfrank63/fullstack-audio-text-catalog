@@ -3,7 +3,7 @@ Public languages views
 '''
 from atcatalog import app
 from flask import render_template, url_for
-from atcatalog.langdata.lang_dicts import language
+from atcatalog.langdata.langdicts import language
 
 
 @app.route('/')

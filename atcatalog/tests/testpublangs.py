@@ -4,7 +4,7 @@ Test cases for the public languages pages
 from unittest import TestCase, main
 from atcatalog import app
 from random import randint
-from atcatalog.langdata.lang_dicts import language
+from atcatalog.langdata.langdicts import language
 
 __author__ = 'johannesfrank'
 
