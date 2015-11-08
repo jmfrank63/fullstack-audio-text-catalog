@@ -1,2 +1,23 @@
-<p>Show the sentence {{ sid }} of language {{ lid }}</p>
-<p>{{ sentence }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentence {{ sentence[1] }} of user {{ sentence[0]}}</title>
+</head>
+    <body>
+        <p>Show the sentence {{ sid }} of language {{ lid }}</p>
+        <ul>
+        {% for item in sentence %}
+            <li>
+                {{ item }}
+            </li>
+        {% endfor %}
+        </ul>
+        <a href="{{ url_for('show_language', lid=lid) }}">
+            Back to language {{ li }}
+        </a>
+        <br>
+        <a href="{{ url_for('show_languages') }}">Back to all languages</a>
+
+    </body>
+</html>
