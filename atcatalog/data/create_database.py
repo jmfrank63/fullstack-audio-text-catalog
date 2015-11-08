@@ -1,6 +1,6 @@
 ''' Setup a database
 '''
-__author__ = 'johannesfrank'
+__author__ = 'Johannes Maria Frank'
 
 from sqlalchemy import Column, ForeignKey, Integer, String, BLOB
 from sqlalchemy.ext.declarative import declarative_base

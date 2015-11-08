@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Language {{ lang_name.capitalize() }}</title>
+</head>
+<body>
+    <h1>
+        Here all sentences of language {{ lang_name.capitalize() }}
+        with id {{ lid }} are shown!
+    </h1>
+    {% for sid, sentence in sentences.iteritems() %}
+            <li>
+                <a href="{{ url_for('show_sentence', lid=lid, sid=sid) }}">
+                    {{ sentence[1] }}
+                </a>
+            </li>
+        {% endfor %}
+    <br>
+    <a href="{{ url_for('show_languages') }}">Back to all languages</a>
+</body>
+</html>

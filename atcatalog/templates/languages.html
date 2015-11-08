@@ -5,14 +5,13 @@
     <title>Public Languages</title>
 </head>
     <body>
-        <a href="{{ login }}" >Login</a>
         <h1>Welcome to the language audio text catalog!</h1>
         <h2>Languages:</h2>
         <ul>
-        {% for key, value in langs.items() %}
+        {% for lang_id, lang_name in languages.items() %}
             <li>
-                <a href="{{ url_for('pub_lang', lid=key) }}">
-                    {{ value.capitalize() }}
+                <a href="{{ url_for('show_language', lid=lang_id) }}">
+                    {{ lang_name.capitalize() }}
                 </a>
             </li>
         {% endfor %}
