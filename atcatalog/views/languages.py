@@ -10,6 +10,6 @@ from atcatalog.data.fake import languages
 def show_languages():
     ''' Show all public language
     '''
-    return render_template('languages.html', languages=languages)
+    return render_template('show_languages.html', languages=languages)
 
 

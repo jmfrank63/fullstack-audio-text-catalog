@@ -20,7 +20,8 @@ def show_sentence_text(lid, sid):
     '''
     Show sentence text
     '''
-    return render_template('show_sentence_text.html', lid=lid, sid=sid)
+    return render_template('show_sentence_text.html', lid=lid, sid=sid,
+                            sentence=sentences[lid][sid])
 
 
 @app.route('/language/<int:lid>/sentence/<int:sid>/translation/')
@@ -28,12 +29,14 @@ def show_sentence_translation(lid, sid):
     '''
     Show sentence translation
     '''
-    return render_template('show_sentence_translation.html', lid=lid, sid=sid)
+    return render_template('show_sentence_translation.html', lid=lid, sid=sid,
+                            sentence=sentences[lid][sid])
 
 
 @app.route('/language/<int:lid>/sentence/<int:sid>/audio/')
-def show_senctence_audio(lid, sid):
+def show_sentence_audio(lid, sid):
     '''
     Show sentence audio
     '''
-    return render_template('show_sentence_audio.hmtl', lid=lid, sid=sid)
+    return render_template('show_sentence_audio.html', lid=lid, sid=sid,
+                            sentence=sentences[lid][sid])

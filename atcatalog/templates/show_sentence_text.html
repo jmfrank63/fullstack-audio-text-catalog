@@ -1,1 +1,7 @@
-<p>Show text of sentence {{ sid }} of language {{ lid }}</p>
+<h1>Show text of sentence {{ sid }} of language {{ lid }}</h1>
+<p>{{ sentence[1]}}</p>
+<p>
+    <a href="{{ url_for('show_sentence', lid=lid, sid=sid) }}">
+        Back to sentence {{ sentence[1] }}
+    </a>
+</p>

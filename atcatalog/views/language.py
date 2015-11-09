@@ -11,5 +11,5 @@ def show_language(lid):
     '''
     Show the content of the public language with id = lid
     '''
-    return render_template('language.html', lid=lid, lang_name=languages[lid],
+    return render_template('show_language.html', lid=lid, lang_name=languages[lid],
                             sentences=sentences[lid])

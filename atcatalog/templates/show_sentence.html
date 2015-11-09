@@ -5,16 +5,25 @@
     <title>Sentence {{ sentence[1] }} of user {{ sentence[0]}}</title>
 </head>
     <body>
-        <p>Show the sentence {{ sid }} of language {{ lid }}</p>
+        <h1>Show the sentence {{ sid }} of language {{ lid }} of user {{ sentence[0] }}</h1>
         <ul>
-        {% for item in sentence %}
-            <li>
-                {{ item }}
+            <li>Text :
+                <a href="{{ url_for('show_sentence_text', lid=lid, sid=sid) }}">
+                    {{ sentence[1] }}
+                </a>
+                <a href="{{ url_for('show_sentence_audio', lid=lid, sid=sid) }}">
+                    <img src="{{ url_for('static', filename='image/rounded-play-button.jpg')}}" height="24">
+                    </img>
+                </a>
             </li>
-        {% endfor %}
+            <li>Translation :
+                <a href="{{ url_for('show_sentence_translation', lid=lid, sid=sid) }}">
+                    {{ sentence[2] }}
+                </a>
+            </li>
         </ul>
         <a href="{{ url_for('show_language', lid=lid) }}">
-            Back to language {{ li }}
+            Back to language {{ lid }}
         </a>
         <br>
         <a href="{{ url_for('show_languages') }}">Back to all languages</a>
