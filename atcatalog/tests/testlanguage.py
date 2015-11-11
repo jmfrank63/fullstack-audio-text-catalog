@@ -1,5 +1,5 @@
 '''
-Test cases for the public languages pages
+Test cases for the public language pages
 '''
 from atcatalog import app
 from unittest import main
@@ -7,11 +7,12 @@ from flask.ext.testing import TestCase
 from flask import Flask
 from random import randint
 from atcatalog.data.fake import languages, sentences
+from random import randint
 
 __author__ = 'Johannes Maria Frank'
 
 
-class TestLanguages(TestCase):
+class TestLanguage(TestCase):
     '''
     Basic testing of the language site
     '''
@@ -26,7 +27,7 @@ class TestLanguages(TestCase):
         '''
         Setup the database
         '''
-        pass
+        self.lid = randint(0, 4)
 
     def tearDown(self):
         '''
@@ -38,23 +39,22 @@ class TestLanguages(TestCase):
         '''
         Test the return status code of public language.
         '''
-        self.assert200(self.client.get('/'))
+        self.assert200(self.client.get('/language/{0}/'.format(self.lid)))
 
     def test_page_loads(self):
         '''
         Test that the public language site actually loads.
         '''
-        self.client.get('/')
-        self.assert_template_used('show_languages.html')
+        self.client.get('/language/{0}/'.format(self.lid))
+        self.assert_template_used('show_language.html')
 
     def test_languages_show(self):
         '''
         Test that language actually show up on page
         '''
-        response = self.client.get('/')
-        for id, language in languages.iteritems():
-            self.assertIn(language.capitalize(), response.data)
-
+        response = self.client.get('/language/{0}/'.format(self.lid))
+        for id, sentence in sentences[self.lid].iteritems():
+            self.assertIn(sentence[1], response.data)
 
 
 if __name__ == '__main__':
