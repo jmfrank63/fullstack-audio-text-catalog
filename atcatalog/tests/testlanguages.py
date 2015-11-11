@@ -53,7 +53,6 @@ class TestLanguages(TestCase):
         '''
         response = self.client.get('/')
         for id, language in languages.iteritems():
-
             self.assertIn(language.capitalize(), response.data)
 
 # class TestPubLang(TestCase):

@@ -24,7 +24,7 @@ class Test(Command):
         '''
         Calls the test
         '''
-        testsuite = unittest.TestLoader().discover('atcatalog/tests')
+        testsuite = unittest.TestLoader().discover('atcatalog')
         unittest.TextTestRunner(verbosity=verbosity).run(testsuite)
 
 class Cover(Command):
@@ -33,20 +33,10 @@ class Cover(Command):
     '''
     def run(self):
         '''
-        Calls the cover command
+        Calls the coverage command
         '''
-        cover = coverage(branch=True, include='atcatalog/*')
-        cover.start()
-        test = Test()
-        test.run(1)
-        cover.stop()
-        cover.save()
-        print 'Coverage Summary:'
-        cover.report()
-        basedir = path.abspath(path.dirname(__file__))
-        covdir = path.join(basedir, 'coverage')
-        cover.html_report(directory=covdir)
-        cover.erase()
+        system('coverage erase && coverage run -m unittest discover')
+        system('coverage html && coverage report -m')
 
 
 def main():
