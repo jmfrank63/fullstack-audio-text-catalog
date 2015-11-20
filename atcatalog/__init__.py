@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Main project flask file for the audio text catalog
 '''

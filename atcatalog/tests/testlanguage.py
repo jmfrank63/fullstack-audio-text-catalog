@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Test cases for the public language pages
 '''
@@ -6,7 +7,7 @@ from unittest import main
 from flask.ext.testing import TestCase
 from flask import Flask
 from random import randint
-from atcatalog.data.fake import languages, sentences
+from atcatalog.data.fake import LANGUAGES, SENTENCES
 from random import randint
 
 __author__ = 'Johannes Maria Frank'
@@ -48,13 +49,13 @@ class TestLanguage(TestCase):
         self.client.get('/language/{0}/'.format(self.lid))
         self.assert_template_used('show_language.html')
 
-    def test_languages_show(self):
+    def test_sentences_show(self):
         '''
         Test that language actually show up on page
         '''
         response = self.client.get('/language/{0}/'.format(self.lid))
-        for id, sentence in sentences[self.lid].iteritems():
-            self.assertIn(sentence[1], response.data)
+        for id, sentence in SENTENCES[self.lid].iteritems():
+            self.assertIn(sentence[1], response.data.decode('utf-8'))
 
 
 if __name__ == '__main__':

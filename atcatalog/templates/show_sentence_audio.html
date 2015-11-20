@@ -1,10 +1,19 @@
-<h1>Show audio of sentence {{ sid }} of language {{ lid }}</h1>
-<audio controls preload="auto" autoplay>
-  <source src="{{ url_for('static', filename=sentence[3]) }}" type="audio/mpeg">
-  Your browser does not support the audio tag.
-</audio>
-<p>
-    <a href="{{ url_for('show_sentence', lid=lid, sid=sid) }}">
-        Back to sentence {{ sentence[1] }}
-    </a>
-</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Sentence {{ sentence[1] }} of user {{ sentence[0]}}</title>
+</head>
+    <body>
+        <h1>Show audio of sentence {{ sid }} of language {{ lid }}</h1>
+        <audio controls preload="auto" autoplay>
+          <source src="{{ url_for('static', filename=sentence[3]) }}" type="audio/mpeg">
+          Your browser does not support the audio tag.
+        </audio>
+        <p>
+            <a href="{{ url_for('show_sentence', lid=lid, sid=sid) }}">
+                Back to sentence {{ sentence[1] }}
+            </a>
+        </p>
+    </<body>
+</html>

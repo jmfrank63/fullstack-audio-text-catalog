@@ -81,21 +81,21 @@
                 
             </td>
             <td class='text' valign='top'>
-<p id='t1' class='pln'><span class='com'># coding=utf-8</span><span class='strut'>&nbsp;</span></p>
+<p id='t1' class='pln'><span class='com'># -*- coding: utf-8 -*-</span><span class='strut'>&nbsp;</span></p>
 <p id='t2' class='stm run hide_run'><span class='str'>&#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
 <p id='t3' class='pln'><span class='str'>Public language view</span><span class='strut'>&nbsp;</span></p>
 <p id='t4' class='pln'><span class='str'>&#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
 <p id='t5' class='stm run hide_run'><span class='key'>from</span> <span class='nam'>atcatalog</span> <span class='key'>import</span> <span class='nam'>app</span><span class='strut'>&nbsp;</span></p>
 <p id='t6' class='stm run hide_run'><span class='key'>from</span> <span class='nam'>flask</span> <span class='key'>import</span> <span class='nam'>render_template</span><span class='op'>,</span> <span class='nam'>url_for</span><span class='strut'>&nbsp;</span></p>
-<p id='t7' class='stm run hide_run'><span class='key'>from</span> <span class='nam'>atcatalog</span><span class='op'>.</span><span class='nam'>data</span><span class='op'>.</span><span class='nam'>fake</span> <span class='key'>import</span> <span class='nam'>languages</span><span class='op'>,</span> <span class='nam'>sentences</span><span class='strut'>&nbsp;</span></p>
+<p id='t7' class='stm run hide_run'><span class='key'>from</span> <span class='nam'>atcatalog</span><span class='op'>.</span><span class='nam'>data</span><span class='op'>.</span><span class='nam'>fake</span> <span class='key'>import</span> <span class='nam'>LANGUAGES</span><span class='op'>,</span> <span class='nam'>SENTENCES</span><span class='strut'>&nbsp;</span></p>
 <p id='t8' class='pln'><span class='strut'>&nbsp;</span></p>
 <p id='t9' class='stm run hide_run'><span class='op'>@</span><span class='nam'>app</span><span class='op'>.</span><span class='nam'>route</span><span class='op'>(</span><span class='str'>&#39;/language/&lt;int:lid&gt;/&#39;</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
 <p id='t10' class='pln'><span class='key'>def</span> <span class='nam'>show_language</span><span class='op'>(</span><span class='nam'>lid</span><span class='op'>)</span><span class='op'>:</span><span class='strut'>&nbsp;</span></p>
 <p id='t11' class='pln'>&nbsp; &nbsp; <span class='str'>&#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
 <p id='t12' class='pln'><span class='str'>&nbsp; &nbsp; Show the content of the public language with id = lid</span><span class='strut'>&nbsp;</span></p>
 <p id='t13' class='pln'><span class='str'>&nbsp; &nbsp; &#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
-<p id='t14' class='stm run hide_run'>&nbsp; &nbsp; <span class='key'>return</span> <span class='nam'>render_template</span><span class='op'>(</span><span class='str'>&#39;show_language.html&#39;</span><span class='op'>,</span> <span class='nam'>lid</span><span class='op'>=</span><span class='nam'>lid</span><span class='op'>,</span> <span class='nam'>lang_name</span><span class='op'>=</span><span class='nam'>languages</span><span class='op'>[</span><span class='nam'>lid</span><span class='op'>]</span><span class='op'>,</span><span class='strut'>&nbsp;</span></p>
-<p id='t15' class='pln'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>sentences</span><span class='op'>=</span><span class='nam'>sentences</span><span class='op'>[</span><span class='nam'>lid</span><span class='op'>]</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
+<p id='t14' class='stm run hide_run'>&nbsp; &nbsp; <span class='key'>return</span> <span class='nam'>render_template</span><span class='op'>(</span><span class='str'>&#39;show_language.html&#39;</span><span class='op'>,</span> <span class='nam'>lid</span><span class='op'>=</span><span class='nam'>lid</span><span class='op'>,</span> <span class='nam'>lang_name</span><span class='op'>=</span><span class='nam'>LANGUAGES</span><span class='op'>[</span><span class='nam'>lid</span><span class='op'>]</span><span class='op'>,</span><span class='strut'>&nbsp;</span></p>
+<p id='t15' class='pln'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>sentences</span><span class='op'>=</span><span class='nam'>SENTENCES</span><span class='op'>[</span><span class='nam'>lid</span><span class='op'>]</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
                 
             </td>
         </tr>

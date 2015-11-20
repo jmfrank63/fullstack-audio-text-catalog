@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ''' Mangager script for flask. '''
 from flask.ext.script import Manager, Shell, Server, Command, Option
 from werkzeug.contrib.fixers import ProxyFix

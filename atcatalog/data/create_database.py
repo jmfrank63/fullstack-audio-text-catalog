@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ''' Setup a database
 '''
 __author__ = 'Johannes Maria Frank'
