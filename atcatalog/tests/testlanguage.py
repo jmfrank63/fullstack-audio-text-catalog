@@ -5,7 +5,7 @@ Test cases for the public language pages
 from atcatalog import app
 from unittest import main
 from flask.ext.testing import TestCase
-from flask import Flask
+
 from random import randint
 from atcatalog.data.fake import LANGUAGES, SENTENCES
 from random import randint

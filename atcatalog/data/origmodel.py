@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-''' Setup a database
+''' Setup a database structure
 '''
 __author__ = 'Johannes Maria Frank'
 
