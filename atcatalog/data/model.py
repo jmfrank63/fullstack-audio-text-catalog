@@ -37,11 +37,11 @@ class Language(db.Model):
         '''
         self.name = name
 
-    def __repr__(self):
+    def __str__(self):
         '''
         Defines the representation of the object
         '''
-        return 'Id: {0!r}, Name: {1!r}'.format(self.id, self.name)
+        return 'Id: {0},\n Name: {1}'.format(self.id, self.name)
 
 
     @property
@@ -76,14 +76,14 @@ class User(db.Model):
         self.email = email
         self.picture = picture
 
-    def __repr__(self):
-        return 'Id: {0!r}, \
-                User: {1!r}, \
-                email: {2!r}, \
-                Picture: {3!r}'.format(self.id,
-                                       self.name,
-                                       self.email,
-                                       self.picture)
+    def __str__(self):
+        return 'Id: {0},\n \
+                User: {1},\n \
+                email: {2},\n \
+                Picture: {3}'.format(self.id,
+                                     self.name,
+                                     self.email,
+                                     self.picture)
 
     @property
     def serialize(self):
@@ -93,6 +93,7 @@ class User(db.Model):
                  'name' : self.name,
                  'email' : self.email,
                  'picture' : self.picture, }
+
 
 class Sentence(db.Model):
     '''
@@ -113,6 +114,18 @@ class Sentence(db.Model):
         self.translation = translation
         self.audio = audio
 
+    @property
+    def serialize(self):
+        '''
+        Returns an easy serializable format
+        '''
+        return { 'id' : self.id,
+                 'text' : self.text,
+                 'translation' : self.translation,
+                 'audio' : self.audio,
+                 'user_id' : self.user_id,
+                 'lang_id' : self.lang_id }
+
+
 if __name__ == '__main__':
     db.create_all()
-
