@@ -8,7 +8,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.associationproxy import association_proxy
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = u'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = u'sqlite:///data/atdatabase.db'
 db = SQLAlchemy(app)
 
 # helper table for many to many relationship of user and language
