@@ -19,13 +19,45 @@ user_language = db.Table('user_language',
                                          db.ForeignKey('language.id')))
 
 
+class User(db.Model):
+    '''
+    User object holding id, name, email and list of languages
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(254), nullable=False)
+    picture = db.Column(db.String(2000))
+    user_languages = db.relationship('Language',
+                                secondary=lambda: user_language,
+                                backref=db.backref('languages',
+                                                   lazy='dynamic'))
+    languages = association_proxy('user_languages', 'name')
+
+    def __init__(self, name, email, picture=None):
+        '''
+        Passes name and email to the table object
+        '''
+        self.name = name
+        self.email = email
+        self.picture = picture
+
+    @property
+    def serialize(self):
+        ''' Returns object data in an easy serializable format
+        '''
+        return { 'id' : self.id,
+                 'name' : self.name,
+                 'email' : self.email,
+                 'picture' : self.picture, }
+
+
 class Language(db.Model):
     '''
     Language table
     '''
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    user = db.relationship('User',secondary=lambda: user_language,
+    language_users = db.relationship('User',secondary=lambda: user_language,
                               backref=db.backref('users',
                                                  lazy='dynamic'))
     users = association_proxy('user','name')
@@ -37,62 +69,14 @@ class Language(db.Model):
         '''
         self.name = name
 
-    def __str__(self):
-        '''
-        Defines the representation of the object
-        '''
-        return 'Id: {0},\n Name: {1}'.format(self.id, self.name)
-
 
     @property
     def serialize(self):
         ''' Returns object data in an easy serializable format
         '''
         return { 'id': self.id,
-                 'lname': self.name, }
+                 'name': self.name, }
 
-
-class User(db.Model):
-    '''
-    User object holding id, name, email and list of languages
-    '''
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(80), nullable=False)
-    picture = db.Column(db.BLOB)
-    language = db.relationship('Language',
-                                secondary=lambda: user_language,
-                                backref=db.backref('languages',
-                                                   lazy='dynamic'))
-    languages = association_proxy('language', 'lname')
-    sentences = db.relationship('Sentence',backref='user', lazy='dynamic')
-
-
-    def __init__(self, name, email, picture):
-        '''
-        Passes name and email to the table object
-        '''
-        self.name = name
-        self.email = email
-        self.picture = picture
-
-    def __str__(self):
-        return 'Id: {0},\n \
-                User: {1},\n \
-                email: {2},\n \
-                Picture: {3}'.format(self.id,
-                                     self.name,
-                                     self.email,
-                                     self.picture)
-
-    @property
-    def serialize(self):
-        ''' Returns object data in an easy serializable format
-        '''
-        return { 'id' : self.id,
-                 'name' : self.name,
-                 'email' : self.email,
-                 'picture' : self.picture, }
 
 
 class Sentence(db.Model):
