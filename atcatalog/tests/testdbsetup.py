@@ -14,6 +14,7 @@ __author__ = 'Johannes Maria Frank'
 DB_PREFIX = 'sqlite:///'
 MALE_IMAGE = 'file:///static/images/male.png'
 FEMALE_IMAGE = 'file:///static/images/female.png'
+AUDIO_DUMMY = 'file:///static/audio/dummy.mp3'
 
 class TestDBSetup(TestCase):
     '''
@@ -138,7 +139,7 @@ class TestDBSetup(TestCase):
         db.session.commit()
         return language
 
-    def _add_languges(self):
+    def _add_languages(self):
         '''
         Adds several languages to the database
         '''
@@ -178,7 +179,7 @@ class TestDBSetup(TestCase):
         '''
         Tests if a user id stays with the user
         '''
-        languages = self._add_languges()
+        languages = self._add_languages()
         query_languages = []
         for idx in reversed(range(1,4)):
             query_languages.append(Language.query.filter_by(id=idx).one())
@@ -195,6 +196,110 @@ class TestDBSetup(TestCase):
                          'name' : name }
         language = self._add_language(Language(name))
         self.assertEqual(language.serialize, language_dict)
+
+    def _add_sentence(self, sentence=None):
+        '''
+        Helper function inserting a default sentence into the database
+        '''
+        if sentence is None:
+            sentence = Sentence('Hello',
+                                'Hello',
+                                'file:///static/audio/hello.mp3',
+                                1,
+                                1)
+        db.session.add(sentence)
+        db.session.commit()
+        return sentence
+
+    def _add_sentences(self):
+        '''
+        Adds several sentences to the database
+        '''
+        sentences = []
+        sentences.append(
+            self._add_sentence(Sentence('Bonjour',
+                                        'Hello',
+                                        'file:///static/audio/bonjour.mp3',
+                                        1,
+                                        2)))
+        sentences.append(
+            self._add_sentence(Sentence('Guten Tag',
+                                        'Hello',
+                                        'file:///static/audio/guten_tag.mp3',
+                                        1,
+                                        3)))
+        sentences.append(
+            self._add_sentence(Sentence('Hombre',
+                                        'Man',
+                                        'file:///static/audio/hombre.mp3',
+                                        1,
+                                        4)))
+        sentences.append(
+            self._add_sentence(Sentence('Bem-vindo',
+                                        'Welcome',
+                                        'file:///static/audio/bem-vindo.mp3',
+                                        1,
+                                        5)))
+        return sentences
+
+    def test_insert_sentence(self):
+        '''
+        Test if a sentence is inserted into the session
+        '''
+        sentence = self._add_sentence()
+        self.assertEqual(sentence.text, 'Hello')
+
+    def test_inserted_sentence(self):
+        '''
+        Test if the sentence is written into the database
+        '''
+        sentence = self._add_sentence()
+        dbfile = os.fdopen(self.handle)
+        dbcontent = dbfile.read()
+        self.assertIn('file:///static/audio/hello.mp3',dbcontent)
+
+    def test_query_sentence(self):
+        '''
+        Test if an inserted sentence can be read from the database
+        '''
+        sentence = self._add_sentence()
+        query_sentence = Sentence.query.filter_by(text='Hello').first()
+        self.assertEqual(query_sentence, sentence)
+        self.assertIn(query_sentence, db.session)
+
+    def test_id_sentence(self):
+        '''
+        Tests if a user id stays with the user
+        '''
+        sentences = self._add_sentences()
+        query_sentences = []
+        for idx in reversed(range(1,4)):
+            query_sentences.append(Sentence.query.filter_by(id=idx).one())
+            self.assertEqual(query_sentences[-1].id, idx)
+            self.assertEqual(query_sentences[-1],sentences[idx - 1])
+
+    def test_serialize_sentence(self):
+        '''
+        Test the serialize function of the sentence model
+        '''
+        id = 1
+        text = 'Hello'
+        translation = 'Hello'
+        audio = 'file:///static/audio/hello.mp3'
+        user_id = 1
+        lang_id = 1
+        sentence_dict = {'id' : id,
+                         'text' : text,
+                         'translation' : translation,
+                         'audio' : audio,
+                         'user_id' : user_id,
+                         'lang_id' : lang_id}
+        sentence = self._add_sentence(Sentence(text,
+                                               translation,
+                                               audio,
+                                               user_id,
+                                               lang_id))
+        self.assertEqual(sentence.serialize, sentence_dict)
 
 if __name__ == '__main__':
     main()

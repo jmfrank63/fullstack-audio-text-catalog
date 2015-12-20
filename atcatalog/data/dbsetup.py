@@ -90,13 +90,17 @@ class Sentence(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     lang_id = db.Column(db.Integer, db.ForeignKey('language.id'))
 
-    def __init__(self, text, translation='', audio='dummy.mp3'):
+    def __init__(self, text, translation='',
+                 audio='file:///static/audio/dummy.mp3',
+                 user_id=1, lang_id=1):
         '''
         Passes text, translation and audio to the sentence object
         '''
         self.text = text
         self.translation = translation
         self.audio = audio
+        self.user_id = user_id
+        self.lang_id = lang_id
 
     @property
     def serialize(self):
