@@ -3,10 +3,11 @@
 Test cases for the database model
 '''
 from atcatalog import app
-from atcatalog.data.dbsetup import db, User, Language, Sentence
+from atcatalog.data.dbsetup import db, User, Language, Sentence, user_language
 from unittest import main
 from flask.ext.testing import TestCase
 from tempfile import mkstemp
+from functools import partial
 import os
 
 __author__ = 'Johannes Maria Frank'
@@ -300,6 +301,26 @@ class TestDBSetup(TestCase):
                                                user_id,
                                                lang_id))
         self.assertEqual(sentence.serialize, sentence_dict)
+
+    def test_add_language_to_user(self):
+        '''
+        Tests if languages can be added to a user
+        '''
+        user = self._add_user()
+        language = self._add_language()
+        self.assertFalse(user.languages)
+        user.languages.append(language)
+        self.assertEqual(user.languages[0], language)
+
+    def test_user_in_language(self):
+        '''
+        Tests if a user is in language after adding the language to the user
+        '''
+        user = self._add_user()
+        language = self._add_language()
+        self.assertFalse(language.users)
+        user.languages.append(language)
+        self.assertEqual(language.users[0], user)
 
 if __name__ == '__main__':
     main()

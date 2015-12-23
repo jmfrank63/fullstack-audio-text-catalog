@@ -27,11 +27,9 @@ class User(db.Model):
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(254), nullable=False)
     picture = db.Column(db.String(2000))
-    user_languages = db.relationship('Language',
+    languages = db.relationship("Language",
                                 secondary=lambda: user_language,
-                                backref=db.backref('languages',
-                                                   lazy='dynamic'))
-    languages = association_proxy('user_languages', 'name')
+                                backref="users")
 
     def __init__(self, name, email, picture=None):
         '''
@@ -57,10 +55,6 @@ class Language(db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    language_users = db.relationship('User',secondary=lambda: user_language,
-                              backref=db.backref('users',
-                                                 lazy='dynamic'))
-    users = association_proxy('user','name')
     sentences = db.relationship('Sentence', backref='language', lazy='dynamic')
 
     def __init__(self, name):
@@ -87,8 +81,10 @@ class Sentence(db.Model):
     text = db.Column(db.Text, nullable=False)
     translation = db.Column(db.Text)
     audio = db.Column(db.String(255))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    lang_id = db.Column(db.Integer, db.ForeignKey('language.id'))
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('user.id'), nullable = False)
+    lang_id = db.Column(db.Integer,
+                        db.ForeignKey('language.id'), nullable = False)
 
     def __init__(self, text, translation='',
                  audio='file:///static/audio/dummy.mp3',
