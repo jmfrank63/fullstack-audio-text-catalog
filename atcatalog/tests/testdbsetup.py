@@ -310,9 +310,9 @@ class TestDBSetup(TestCase):
         language = self._add_language()
         self.assertFalse(user.languages)
         user.languages.append(language)
-        self.assertEqual(user.languages[0], language)
+        self.assertIn(language, user.languages)
 
-    def test_user_in_language(self):
+    def test_user_in_added_language(self):
         '''
         Tests if a user is in language after adding the language to the user
         '''
@@ -320,7 +320,23 @@ class TestDBSetup(TestCase):
         language = self._add_language()
         self.assertFalse(language.users)
         user.languages.append(language)
-        self.assertEqual(language.users[0], user)
+        self.assertIn(user, language.users)
+
+    def test_add_languages_to_users(self):
+        '''
+        Test if multiple languages can be added to multiple users
+        '''
+        users = self._add_users()
+        languages = self._add_languages()
+        for user in users:
+            for language in languages:
+                user.languages.append(language)
+        for user in users:
+            for language in languages:
+                self.assertIn(language, user.languages)
+        for language in user.languages:
+            for user in users:
+                self.assertIn(user, language.users)
 
 if __name__ == '__main__':
     main()

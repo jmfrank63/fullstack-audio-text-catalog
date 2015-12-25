@@ -25,7 +25,7 @@ GERMAN = {0: (0, u'Hallo!', u'Hello!', u'audio/hallo.mp3'),
           1: (1, u'Guten Tag!', u'Good day!', u'audio/guten_tag.mp3')}
 
 PORTUGUESE = {0: (0, u'Olá!', u'Hello!', u'audio/ola.mp3'),
-              1: (1, u'Bem-vindo!', u'Welcome!', u'audio/bemvindo.mp3')}
+              1: (1, u'Bem-vindo!', u'Welcome!', u'audio/bem-vindo.mp3')}
 
 SENTENCES = {0: ENGLISH,
              1: SPANISH,

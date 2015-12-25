@@ -19,6 +19,30 @@ user_language = db.Table('user_language',
                                          db.ForeignKey('language.id')))
 
 
+class Language(db.Model):
+    '''
+    Language table
+    '''
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    sentences = db.relationship('Sentence', backref='language', lazy='dynamic')
+
+    def __init__(self, name):
+        '''
+        Passes language name and user to the language table object
+        '''
+        self.name = name
+
+
+    @property
+    def serialize(self):
+        ''' Returns object data in an easy serializable format
+        '''
+        return { 'id': self.id,
+                 'name': self.name, }
+
+
+
 class User(db.Model):
     '''
     User object holding id, name, email and list of languages
@@ -47,30 +71,6 @@ class User(db.Model):
                  'name' : self.name,
                  'email' : self.email,
                  'picture' : self.picture, }
-
-
-class Language(db.Model):
-    '''
-    Language table
-    '''
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    sentences = db.relationship('Sentence', backref='language', lazy='dynamic')
-
-    def __init__(self, name):
-        '''
-        Passes language name and user to the language table object
-        '''
-        self.name = name
-
-
-    @property
-    def serialize(self):
-        ''' Returns object data in an easy serializable format
-        '''
-        return { 'id': self.id,
-                 'name': self.name, }
-
 
 
 class Sentence(db.Model):
