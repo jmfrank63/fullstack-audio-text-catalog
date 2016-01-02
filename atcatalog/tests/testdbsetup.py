@@ -8,14 +8,13 @@ from unittest import main
 from flask.ext.testing import TestCase
 from tempfile import mkstemp
 from functools import partial
+from sqlalchemy import exc
+import atcatalog.data.dbfill as dbfill
+import atcatalog.data.const as const
 import os
 
-__author__ = 'Johannes Maria Frank'
 
-DB_PREFIX = 'sqlite:///'
-MALE_IMAGE = 'file:///static/images/male.png'
-FEMALE_IMAGE = 'file:///static/images/female.png'
-AUDIO_DUMMY = 'file:///static/audio/dummy.mp3'
+__author__ = 'Johannes Maria Frank'
 
 class TestDBSetup(TestCase):
     '''
@@ -27,7 +26,7 @@ class TestDBSetup(TestCase):
         '''
         app.config['TESTING'] = True
         self.handle, self.dbname = mkstemp(suffix='.db')
-        app.config['SQLALCHEMY_DATABASE_URI'] = DB_PREFIX + self.dbname
+        app.config['SQLALCHEMY_DATABASE_URI'] = const.DB_PREFIX + self.dbname
         return app
 
     def setUp(self):
@@ -42,65 +41,31 @@ class TestDBSetup(TestCase):
         '''
         db.session.remove()
         db.drop_all()
-        try:
-            os.close(self.handle)
-        except OSError:
-            pass
         os.remove(self.dbname)
-
-    def _add_user(self, user=None):
-        '''
-        Helper function inserting a default user into the database
-        '''
-        if user is None:
-            user = User('Johannes', 'jmfrank63@gmail.com',
-                        MALE_IMAGE)
-        db.session.add(user)
-        db.session.commit()
-        return user
-
-    def _add_users(self):
-        '''
-        Adds several users to the database
-        '''
-        users = []
-        users.append(self._add_user(User('Ted',
-                                         'ted@example.com',
-                                         MALE_IMAGE)))
-        users.append(self._add_user(User('Jane',
-                                         'janedoe@example.com',
-                                         FEMALE_IMAGE)))
-        users.append(self._add_user(User('John',
-                                         'johndoe@example.com',
-                                         MALE_IMAGE)))
-        users.append(self._add_user(User('Sarah',
-                                         'sarah@example.com',
-                                         FEMALE_IMAGE)))
-        return users
 
     def test_insert_user(self):
         '''
         Tests if a user is inserted into the session
         '''
-        user = self._add_user()
+        user = dbfill.add_user()
         self.assertIn(user, db.session)
 
     def test_inserted_user(self):
         '''
         Test if the user is written into the database
         '''
-        user = self._add_user()
-        dbfile = os.fdopen(self.handle)
-        dbcontent = dbfile.read()
-        self.assertIn('Johannes',dbcontent)
-        self.assertIn('jmfrank63@gmail.com', dbcontent)
+        user = dbfill.add_user()
+        with os.fdopen(self.handle) as dbfile:
+            dbcontent = dbfile.read()
+            self.assertIn(user.name.encode('ascii'), dbcontent)
+            self.assertIn(user.email.encode('ascii'), dbcontent)
 
     def test_query_user(self):
         '''
         Test if an inserted user can be read from the database
         '''
-        user = self._add_user()
-        query_user = User.query.filter_by(email='jmfrank63@gmail.com').one()
+        user = dbfill.add_user()
+        query_user = User.query.filter_by(email=user.email).one()
         self.assertEqual(query_user, user)
         self.assertIn(query_user, db.session)
 
@@ -108,7 +73,7 @@ class TestDBSetup(TestCase):
         '''
         Tests if a user id stays with the user
         '''
-        users = self._add_users()
+        users = dbfill.add_users()
         query_users = []
         for idx in reversed(range(1,4)):
             query_users.append(User.query.filter_by(id=idx).one())
@@ -122,48 +87,27 @@ class TestDBSetup(TestCase):
         id = 1
         name = 'Johannes'
         email = 'jmfrank63@gmail.com'
-        picture = MALE_IMAGE
+        picture = const.MALE_IMAGE
         user_dict = {'id' : id,
                      'name' : name,
                      'email' : email,
                      'picture' : picture}
-        user = self._add_user(User(name, email, picture))
+        user = dbfill.add_user(User(name, email, picture))
         self.assertEqual(user.serialize, user_dict)
-
-    def _add_language(self, language=None):
-        '''
-        Helper function inserting a default language into the database
-        '''
-        if language is None:
-            language = Language('English')
-        db.session.add(language)
-        db.session.commit()
-        return language
-
-    def _add_languages(self):
-        '''
-        Adds several languages to the database
-        '''
-        languages = []
-        languages.append(self._add_language(Language('French')))
-        languages.append(self._add_language(Language('German')))
-        languages.append(self._add_language(Language('Spanish')))
-        languages.append(self._add_language(Language('Portuguese')))
-        return languages
 
     def test_insert_language(self):
         '''
         Test if a language is inserted into the session
         '''
-        language = self._add_language()
+        language = dbfill.add_language()
         self.assertEqual(language.name, 'English')
 
     def test_inserted_language(self):
         '''
         Test if the language is written into the database
         '''
-        language = self._add_language()
-        dbfile = os.fdopen(self.handle)
+        language = dbfill.add_language()
+        dbfile = open(self.dbname)
         dbcontent = dbfile.read()
         self.assertIn('English',dbcontent)
 
@@ -171,7 +115,7 @@ class TestDBSetup(TestCase):
         '''
         Test if an inserted language can be read from the database
         '''
-        language = self._add_language()
+        language = dbfill.add_language()
         query_language = Language.query.filter_by(name='English').one()
         self.assertEqual(query_language, language)
         self.assertIn(query_language, db.session)
@@ -180,7 +124,7 @@ class TestDBSetup(TestCase):
         '''
         Tests if a user id stays with the user
         '''
-        languages = self._add_languages()
+        languages = dbfill.add_languages()
         query_languages = []
         for idx in reversed(range(1,4)):
             query_languages.append(Language.query.filter_by(id=idx).one())
@@ -195,67 +139,23 @@ class TestDBSetup(TestCase):
         name = 'English'
         language_dict = {'id' : id,
                          'name' : name }
-        language = self._add_language(Language(name))
+        language = dbfill.add_language(Language(name))
         self.assertEqual(language.serialize, language_dict)
 
-    def _add_sentence(self, sentence=None):
-        '''
-        Helper function inserting a default sentence into the database
-        '''
-        if sentence is None:
-            sentence = Sentence('Hello',
-                                'Hello',
-                                'file:///static/audio/hello.mp3',
-                                1,
-                                1)
-        db.session.add(sentence)
-        db.session.commit()
-        return sentence
-
-    def _add_sentences(self):
-        '''
-        Adds several sentences to the database
-        '''
-        sentences = []
-        sentences.append(
-            self._add_sentence(Sentence('Bonjour',
-                                        'Hello',
-                                        'file:///static/audio/bonjour.mp3',
-                                        1,
-                                        2)))
-        sentences.append(
-            self._add_sentence(Sentence('Guten Tag',
-                                        'Hello',
-                                        'file:///static/audio/guten_tag.mp3',
-                                        1,
-                                        3)))
-        sentences.append(
-            self._add_sentence(Sentence('Hombre',
-                                        'Man',
-                                        'file:///static/audio/hombre.mp3',
-                                        1,
-                                        4)))
-        sentences.append(
-            self._add_sentence(Sentence('Bem-vindo',
-                                        'Welcome',
-                                        'file:///static/audio/bem-vindo.mp3',
-                                        1,
-                                        5)))
-        return sentences
 
     def test_insert_sentence(self):
         '''
         Test if a sentence is inserted into the session
         '''
-        sentence = self._add_sentence()
+        sentence = dbfill.add_sentence()
         self.assertEqual(sentence.text, 'Hello')
 
     def test_inserted_sentence(self):
         '''
         Test if the sentence is written into the database
         '''
-        sentence = self._add_sentence()
-        dbfile = os.fdopen(self.handle)
+        sentence = dbfill.add_sentence()
+        dbfile = open(self.dbname)
         dbcontent = dbfile.read()
         self.assertIn('file:///static/audio/hello.mp3',dbcontent)
 
@@ -263,7 +163,7 @@ class TestDBSetup(TestCase):
         '''
         Test if an inserted sentence can be read from the database
         '''
-        sentence = self._add_sentence()
+        sentence = dbfill.add_sentence()
         query_sentence = Sentence.query.filter_by(text='Hello').first()
         self.assertEqual(query_sentence, sentence)
         self.assertIn(query_sentence, db.session)
@@ -272,7 +172,7 @@ class TestDBSetup(TestCase):
         '''
         Tests if a user id stays with the user
         '''
-        sentences = self._add_sentences()
+        sentences = dbfill.add_sentences()
         query_sentences = []
         for idx in reversed(range(1,4)):
             query_sentences.append(Sentence.query.filter_by(id=idx).one())
@@ -295,7 +195,7 @@ class TestDBSetup(TestCase):
                          'audio' : audio,
                          'user_id' : user_id,
                          'lang_id' : lang_id}
-        sentence = self._add_sentence(Sentence(text,
+        sentence = dbfill.add_sentence(Sentence(text,
                                                translation,
                                                audio,
                                                user_id,
@@ -306,8 +206,8 @@ class TestDBSetup(TestCase):
         '''
         Tests if languages can be added to a user
         '''
-        user = self._add_user()
-        language = self._add_language()
+        user = dbfill.add_user()
+        language = dbfill.add_language()
         self.assertFalse(user.languages)
         user.languages.append(language)
         self.assertIn(language, user.languages)
@@ -316,8 +216,8 @@ class TestDBSetup(TestCase):
         '''
         Tests if a user is in language after adding the language to the user
         '''
-        user = self._add_user()
-        language = self._add_language()
+        user = dbfill.add_user()
+        language = dbfill.add_language()
         self.assertFalse(language.users)
         user.languages.append(language)
         self.assertIn(user, language.users)
@@ -326,8 +226,8 @@ class TestDBSetup(TestCase):
         '''
         Test if multiple languages can be added to multiple users
         '''
-        users = self._add_users()
-        languages = self._add_languages()
+        users = dbfill.add_users()
+        languages = dbfill.add_languages()
         for user in users:
             for language in languages:
                 user.languages.append(language)
@@ -337,6 +237,65 @@ class TestDBSetup(TestCase):
         for language in user.languages:
             for user in users:
                 self.assertIn(user, language.users)
+
+class TestDBCRUD(TestCase):
+    '''
+    Basic testing of the dbsetup module
+    '''
+    def create_app(self):
+        '''
+        Necessary for the flask testing extension module
+        '''
+        app.config['TESTING'] = True
+        self.handle, self.dbname = mkstemp(suffix='.db')
+        app.config['SQLALCHEMY_DATABASE_URI'] = const.DB_PREFIX + self.dbname
+        return app
+
+    def setUp(self):
+        '''
+        Setup the database
+        '''
+        db.create_all()
+        self.user = dbfill.add_user()
+        self.language = dbfill.add_language()
+        self.sentence = dbfill.add_sentence()
+
+    def tearDown(self):
+        '''
+        Drop all tables in the database so we can start again
+        '''
+        db.session.remove()
+        db.drop_all()
+        os.close(self.handle)
+        os.remove(self.dbname)
+
+    def test_create_sentence(self):
+        '''
+        Test if the sentence contains a valid user and language id
+        '''
+        self.assertEqual(self.user.id, self.sentence.user_id)
+        self.assertEqual(self.language.id, self.sentence.lang_id)
+
+    def test_unique_user(self):
+        '''
+        Test that email must be unique
+        '''
+        with self.assertRaises(exc.IntegrityError):
+            dbfill.add_user()
+
+    def test_unique_language(self):
+        '''
+        Test that language name is unique
+        '''
+        with self.assertRaises(exc.IntegrityError):
+            dbfill.add_language()
+
+    def test_unique_sentence(self):
+        '''
+        Test sentences are unique to a user
+        '''
+        with self.assertRaises(exc.IntegrityError):
+            dbfill.add_sentence()
 
 if __name__ == '__main__':
     main()
