@@ -5,7 +5,20 @@ SqlAlchemy Model of the database
 
 from atcatalog import app
 from flask.ext.sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.associationproxy import association_proxy
+#from sqlalchemy.ext.associationproxy import association_proxy
+
+import sqlite3
+
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
+
+# For sqlite to force foreign key constraint
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if type(dbapi_connection) is sqlite3.Connection:  # play well with other DB backends
+       cursor = dbapi_connection.cursor()
+       cursor.execute("PRAGMA foreign_keys=ON")
+       cursor.close()
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = u'sqlite:///data/atdatabase.db'
@@ -51,17 +64,19 @@ class User(db.Model):
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(254), nullable=False, unique=True)
     picture = db.Column(db.String(2000))
+    lang_id = db.Column(db.ForeignKey('language.id'), nullable=False)
     languages = db.relationship("Language",
                                 secondary=lambda: user_language,
                                 backref="users")
 
-    def __init__(self, name, email, picture=None):
+    def __init__(self, name, email, picture=None, lang_id=1):
         '''
         Passes name and email to the table object
         '''
         self.name = name
         self.email = email
         self.picture = picture
+        self.lang_id = lang_id
 
     @property
     def serialize(self):

@@ -22,9 +22,9 @@ def add_users():
     Adds several users to the database
     '''
     users = []
-    users.append(add_user(User('Ted', 'ted@example.com', 
+    users.append(add_user(User('Ted', 'ted@example.com',
                                const.MALE_IMAGE)))
-    users.append(add_user(User('Jane', 'janedoe@example.com', 
+    users.append(add_user(User('Jane', 'janedoe@example.com',
                                const.FEMALE_IMAGE)))
     users.append(add_user(User('John', 'johndoe@example.com',
                                const.MALE_IMAGE)))
@@ -47,6 +47,7 @@ def add_languages():
     Adds several languages to the database
     '''
     languages = []
+    languages.append(add_language(Language('English')))
     languages.append(add_language(Language('French')))
     languages.append(add_language(Language('German')))
     languages.append(add_language(Language('Spanish')))
