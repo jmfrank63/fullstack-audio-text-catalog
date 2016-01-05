@@ -5,20 +5,6 @@ SqlAlchemy Model of the database
 
 from atcatalog import app
 from flask.ext.sqlalchemy import SQLAlchemy
-#from sqlalchemy.ext.associationproxy import association_proxy
-
-import sqlite3
-
-from sqlalchemy.engine import Engine
-from sqlalchemy import event
-
-# For sqlite to force foreign key constraint
-@event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    if type(dbapi_connection) is sqlite3.Connection:  # play well with other DB backends
-       cursor = dbapi_connection.cursor()
-       cursor.execute("PRAGMA foreign_keys=ON")
-       cursor.close()
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = u'sqlite:///data/atdatabase.db'
@@ -126,6 +112,11 @@ class Sentence(db.Model):
                  'user_id' : self.user_id,
                  'lang_id' : self.lang_id }
 
+def make_db():
+    '''
+    creates the database
+    '''
+    db.create_all()
 
 if __name__ == '__main__':
-    db.create_all()
+    make_db()

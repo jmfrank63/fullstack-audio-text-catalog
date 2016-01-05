@@ -144,7 +144,7 @@ class TestDBSetup(TestCase):
         name = 'English'
         language_dict = {'id' : id,
                          'name' : name }
-        language = dbfill.add_language(Language(name))
+        language = dbfill.add_language(name)
         self.assertEqual(language.serialize, language_dict)
 
 

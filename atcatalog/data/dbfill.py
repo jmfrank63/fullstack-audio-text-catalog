@@ -2,7 +2,10 @@
 '''
 This module provides helper functions filling the database with entries
 '''
-from atcatalog.data.dbsetup import db, User, Language, Sentence, user_language
+from atcatalog.data.dbsetup import db, make_db, \
+                                   User, Language, Sentence, user_language
+from atcatalog.data.csvinput import read_all
+
 import atcatalog.data.const as const
 
 
@@ -32,26 +35,26 @@ def add_users():
                                const.FEMALE_IMAGE)))
     return users
 
-def add_language(language=None):
+def add_language(name=None):
     '''
-    Helper function inserting a default language into the database
+    Helper function inserting a language into the database
     '''
-    if language is None:
-        language = Language('English')
+    if name is None:
+        name = const.DEFAULT_LANGUAGE
+    language = Language(name)
     db.session.add(language)
     db.session.commit()
     return language
 
-def add_languages():
+def add_languages(names=None):
     '''
     Adds several languages to the database
     '''
+    if names is None:
+        names = ['English', 'French', 'German', 'Spanish', 'Portuguese']
     languages = []
-    languages.append(add_language(Language('English')))
-    languages.append(add_language(Language('French')))
-    languages.append(add_language(Language('German')))
-    languages.append(add_language(Language('Spanish')))
-    languages.append(add_language(Language('Portuguese')))
+    for name in names:
+        languages.append(add_language(name))
     return languages
 
 def add_sentence(sentence=None):
@@ -98,3 +101,9 @@ def add_sentences():
                                     1,
                                     5)))
     return sentences
+
+if __name__ == '__main__':
+    make_db()
+    languages, users, sentences = read_all()
+    for language in languages:
+        add_language(language[0])
