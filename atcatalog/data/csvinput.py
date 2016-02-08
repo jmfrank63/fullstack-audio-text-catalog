@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Reads content from csv formated files to fill the database
 '''
@@ -13,7 +14,7 @@ def read_csv(table):
     reads the content of a csv file and 
     returns its results as a generator
     '''
-    with open(const.DATA_DIR + table, 'r') as csv_file:
+    with open(const.DATA_PATH + table, 'r') as csv_file:
         reader = csv.reader(csv_file)
         # we skip the header
         reader.next()

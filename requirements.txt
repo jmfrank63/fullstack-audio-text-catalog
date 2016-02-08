@@ -1,6 +1,10 @@
 astroid==1.3.8
 blinker==1.4
+click==6.2
 coverage==3.7.1
+dateutils==0.6.6
+fake-factory==0.5.3
+first==2.0.1
 flake8==2.4.1
 Flask==0.10.1
 Flask-Assets==0.11
@@ -18,8 +22,10 @@ pyflakes==0.8.1
 pylint==1.4.4
 pylint-flask==0.1
 pylint-plugin-utils==0.2.3
+python-dateutil==2.4.2
+pytz==2015.7
 six==1.9.0
-SQLAlchemy==1.0.9
+SQLAlchemy==1.0.11
 webassets==0.11
 Werkzeug==0.10.4
 wheel==0.24.0

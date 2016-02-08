@@ -12,9 +12,9 @@ db = SQLAlchemy(app)
 
 # helper table for many to many relationship of user and language
 user_language = db.Table('user_language',
-                            db.Column('user_id',db.Integer,
+                            db.Column('user',db.Integer,
                                          db.ForeignKey('user.id')),
-                            db.Column('lang_id', db.Integer,
+                            db.Column('language', db.Integer,
                                          db.ForeignKey('language.id')))
 
 
@@ -23,23 +23,27 @@ class Language(db.Model):
     Language table
     '''
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False, unique=True)
+    code = db.Column(db.String(5), nullable=False, unique=True)
     sentences = db.relationship('Sentence', backref='language', lazy='dynamic')
 
-    def __init__(self, name):
+    def __init__(self, code):
         '''
-        Passes language name and user to the language table object
+        Passes language code to the language table object
         '''
-        self.name = name
+        self.code = code
 
+    def __repr__(self):
+        '''
+        String representing the object
+        '''
+        return u'Language id: {0}, code: {1}'.format(self.id, self.code)
 
     @property
     def serialize(self):
         ''' Returns object data in an easy serializable format
         '''
         return { 'id': self.id,
-                 'name': self.name, }
-
+                 'code': self.code }
 
 
 class User(db.Model):
@@ -50,28 +54,36 @@ class User(db.Model):
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(254), nullable=False, unique=True)
     picture = db.Column(db.String(2000))
-    lang_id = db.Column(db.ForeignKey('language.id'), nullable=False)
+    language = db.Column(db.ForeignKey('language.id'), nullable=False)
     languages = db.relationship("Language",
                                 secondary=lambda: user_language,
                                 backref="users")
 
-    def __init__(self, name, email, picture=None, lang_id=1):
+    def __init__(self, name, email, picture, language, languages):
         '''
-        Passes name and email to the table object
+        Initializes the user object
         '''
         self.name = name
         self.email = email
         self.picture = picture
-        self.lang_id = lang_id
+        self.lang_id = add_language(language).id
+        self.language = language
 
     @property
     def serialize(self):
-        ''' Returns object data in an easy serializable format
         '''
-        return { 'id' : self.id,
-                 'name' : self.name,
-                 'email' : self.email,
-                 'picture' : self.picture, }
+        Returns object data in an easy serializable format
+        '''
+        language = Language.query.get(language)
+        languages = [(lang.id, lang.code)
+                     for lang in Language.query.get(lng.id)
+                         for lng in self.languages]
+        return { 'id': self.id,
+                 'name': self.name,
+                 'email': self.email,
+                 'picture': self.picture,
+                 'language': (language.id, language.code),
+                 'languages': languages}
 
 
 class Sentence(db.Model):
@@ -84,13 +96,11 @@ class Sentence(db.Model):
     audio = db.Column(db.String(255))
     user_id = db.Column(db.Integer,
                         db.ForeignKey('user.id'), nullable = False)
-    lang_id = db.Column(db.Integer,
+    language_id = db.Column(db.Integer,
                         db.ForeignKey('language.id'), nullable = False)
     __table_args__ = (db.UniqueConstraint('text', 'user_id'),)
 
-    def __init__(self, text, translation='',
-                 audio='file:///static/audio/dummy.mp3',
-                 user_id=1, lang_id=1):
+    def __init__(self, text, translation, audio, user_id, language_id):
         '''
         Passes text, translation and audio to the sentence object
         '''
@@ -98,7 +108,7 @@ class Sentence(db.Model):
         self.translation = translation
         self.audio = audio
         self.user_id = user_id
-        self.lang_id = lang_id
+        self.language_id = language_id
 
     @property
     def serialize(self):
@@ -109,8 +119,8 @@ class Sentence(db.Model):
                  'text' : self.text,
                  'translation' : self.translation,
                  'audio' : self.audio,
-                 'user_id' : self.user_id,
-                 'lang_id' : self.lang_id }
+                 'user' : self.user_id,
+                 'language' : self.language_id }
 
 def make_db():
     '''

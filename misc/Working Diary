@@ -1,0 +1,67 @@
+Sun 31 Jan 2016
+
+The project started now almost 4 month ago and I had really some trouble
+to keep it on track.
+My main difficulty has and still is to some degree SQL and the orm.
+It could have been misconception or pure misunderstanding I don't know exactly.
+Nevertheless I am now almost at my interim goal to get a solid and functioning
+model.
+I could have made it easy like I did before, but this time I didn't for I wanted
+to tackle my real weakness of having trouble to organise a bigger project.
+I have been stuggling with his all my life but this time I decided to go for it.
+I solved so many serious problems of my life until now it is time to get rid of
+this problem as well. I can't tell if I am really slow or normal but I am doing
+some progress so it's fine.
+
+Starting this diary is part of the progress I do.
+
+Task:
+Build a catalog application with flask and sqlalchemy and add javascript user
+authentification.
+
+There is a blueprint in form of a restaurant catalog.
+
+I decided to do an language and audio text catalog instead of restaurants
+and menus.
+
+But this introduced a many to many relationship and the trouble began.
+
+At the moment I think I have a working model. But to be sure everything shall be
+under tests. I already wrote tests only to find out my model wasn't right.
+
+Writing tests is not a silver bullet. It helps a lot but doesn't releave you of
+having the right logic underneath.
+
+Now I think I have the right logic and the right data model. Now everything
+shall be tested.
+
+I wrote a data generator to have data to work with an test things. That was a
+really good idea but it was time costly. I hope the time I invested pays out.
+
+Today I started to work on the final creation function. I shall take the number
+of languages one wants, the number of users and the number of sentences per
+user.
+
+It shall return an object that can then be inserted into the database.
+
+I overwrote the orm classes with classes that replaced any fields that have
+foreign key relationships and replaces these with the actual objects.
+
+Now I want to create testing data, insert them into the database and have the
+whole process under test.
+
+I am aiming to manage this by the end of the next week.
+
+Mo. 1. Feb. 2016
+Planing to do some minor step. Get the data generator ready and an overview
+of the testing.
+
+I ran into a problem when testing the create language routine. The inheritage
+doesn't initialise my parameter. I found out that this is due to the
+decorator. Have to figure out a way to get around this.
+
+Mo. 8. Feb. 2016
+A busy week, which didn't see much programming. Maybe because I found out why
+I had an error in the inheritage. Nevertheless the work continues. Now the
+basics should work and I am going to commit. Next is to write a generator
+function to save the generated data to disk. Finally put everything under test.

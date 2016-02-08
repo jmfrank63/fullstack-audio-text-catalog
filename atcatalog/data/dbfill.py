@@ -2,20 +2,41 @@
 '''
 This module provides helper functions filling the database with entries
 '''
-from atcatalog.data.dbsetup import db, make_db, \
-                                   User, Language, Sentence, user_language
-from atcatalog.data.csvinput import read_all
-
+from atcatalog.data.atcmodel import *
+from atcatalog.data.gendata import GenDBData
 import atcatalog.data.const as const
 
+
+def add_language(language=None):
+    '''
+    Helper function inserting a language into the database
+    only if it doesn't exist
+    '''
+    if language is None:
+        language = Language(*const.DEFAULT_LANGUAGE)
+    if Language.query.filter_by(code=language.code).one_or_none() is None:
+        db.session.add(language)
+        db.session.commit()
+        return language
+
+def add_languages(languages=None):
+    '''
+    Adds several languages to the database and return its objects
+    '''
+    if languages is None:
+        return [add_language(lang) for lang in GenDBData.read_languages()]
+    return [add_language(lang) for lang in languages]
 
 def add_user(user=None):
     '''
     Helper function inserting a default user into the database
     '''
     if user is None:
-        user = User('Johannes', 'jmfrank63@gmail.com',
-                    const.MALE_IMAGE)
+        user = GenDBData(1,0,1).new_random_user()
+    language = add_language(user.lang_id)
+    user.lang_id = language.id
+    languages = add_languages(user.languages)
+    
     db.session.add(user)
     db.session.commit()
     return user
@@ -34,28 +55,6 @@ def add_users():
     users.append(add_user(User('Sarah', 'sarah@example.com',
                                const.FEMALE_IMAGE)))
     return users
-
-def add_language(name=None):
-    '''
-    Helper function inserting a language into the database
-    '''
-    if name is None:
-        name = const.DEFAULT_LANGUAGE
-    language = Language(name)
-    db.session.add(language)
-    db.session.commit()
-    return language
-
-def add_languages(names=None):
-    '''
-    Adds several languages to the database
-    '''
-    if names is None:
-        names = ['English', 'French', 'German', 'Spanish', 'Portuguese']
-    languages = []
-    for name in names:
-        languages.append(add_language(name))
-    return languages
 
 def add_sentence(sentence=None):
     '''
@@ -104,6 +103,6 @@ def add_sentences():
 
 if __name__ == '__main__':
     make_db()
-    languages, users, sentences = read_all()
+    languages, users, sentences = gendata.gen_data()
     for language in languages:
-        add_language(language[0])
+        add_language(language[1])
