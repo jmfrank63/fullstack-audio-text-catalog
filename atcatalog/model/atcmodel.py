@@ -173,14 +173,13 @@ class User(db.Model):
     codes = association_proxy('languages', 'code')
     sentences = db.relationship('Sentence', backref='user')
 
-    def __init__(self, name, email, codes=[],
-                 picture=const.MALE_IMAGE):
+    def __init__(self, name, email, codes, picture):
         '''
         Initializes the user object
         '''
         self.name = name
         self.email = email
-        self.codes.extend(codes)
+        self.codes = codes
         self.picture = picture
 
     @force_encoded_string_output
