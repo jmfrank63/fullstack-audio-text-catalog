@@ -65,3 +65,24 @@ A busy week, which didn't see much programming. Maybe because I found out why
 I had an error in the inheritage. Nevertheless the work continues. Now the
 basics should work and I am going to commit. Next is to write a generator
 function to save the generated data to disk. Finally put everything under test.
+
+Sat. 13th February 2016
+Finally got the data generator working. It was a busy week, with lots of new
+stuff to learn at NetApp, so I didn't manage to make any progress over
+the week. Tomorrow, I hope to get the data written to disk, and read in
+again, if existent. Then everything has to get set under test so I can finally
+start the application. SQL was a real obstacle, but I think I finally managed
+to get over it.
+
+Sun. 14th February 2016
+Today saving the generated data is planed. I would like to have generated data
+to be saved as csv data to disk, so they can be read in again and reused.
+So there is a gendata module and a csvio module. Generated data will be saved
+to disk with number of languages, users, and sentences in the name and a data
+and time stamp. the data can then be read in again.
+In future the admin could use these data. For the moment the filename to be
+read in and saved will be a fixed name determined by a string in const.py
+
+Tue. 16th February 2016
+Got the unittest error free again. Finally. Code coverage is however down to
+70%. Got to add more tests and go near 100%

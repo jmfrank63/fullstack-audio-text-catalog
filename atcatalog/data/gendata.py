@@ -10,9 +10,10 @@ holds the full object instead.
 import faker
 import csv
 import random
-import atcatalog.data.const as const
+import os
+import cPickle as pickle
+from atcatalog.data.const import *
 from atcatalog.model.atcmodel import *
-from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class GenLanguage(Language):
@@ -28,6 +29,7 @@ class GenLanguage(Language):
         String representing the object
         '''
         return u"<Language(code='{}')>\n".format(self.code)
+
 
 class GenUser(User):
     '''
@@ -92,13 +94,13 @@ def create_random_code():
     '''
     Returns a random language code
     '''
-    return random.choice(list(const.LANG_DICT.keys()))
+    return random.choice(list(LANG_DICT.keys()))
 
 def create_random_codes(num):
     '''
     Creates a list of language codes in random order
     '''
-    codes = list(const.LANG_DICT.keys())
+    codes = list(LANG_DICT.keys())
     random.shuffle(codes)
     if num >= len(codes):
         return codes
@@ -108,7 +110,7 @@ def create_all_codes():
     '''
     Creates all languages
     '''
-    return [GenLanguage(code) for code in const.LANG_DICT.keys()]
+    return [GenLanguage(code) for code in LANG_DICT.keys()]
 
     # The users section **********
 def create_random_user(codes):
@@ -118,7 +120,7 @@ def create_random_user(codes):
     fake = faker.Factory.create(codes[0])
     name = fake.name()
     email = fake.email()
-    picture = const.IMAGE
+    picture = IMAGE
     user = GenUser(name, email, codes, picture)
     return user
 
@@ -141,7 +143,7 @@ def create_random_sentence(user, code):
     fake = faker.Factory.create(code)
     text = fake.sentence()
     translation = fake.sentence()
-    audio = const.AUDIO_DUMMY
+    audio = AUDIO_DUMMY
     sentence = GenSentence(text, translation, audio, code, user)
     user.sentences.append(sentence)
     return sentence
@@ -168,3 +170,39 @@ def gen_full_data(language_num, user_num, sentence_num):
             sentences.extend(create_random_sentences(user, code, sentence_num))
     return codes, users, sentences
 
+def create_gen_data(lang_num, user_num, sentence_num):
+    '''
+    Generates a data set and serializes it
+    '''
+    PFILE = DATA_PATH + PICKLE_FILE
+    if not os.path.exists(PFILE):
+        gen_data = gen_full_data(lang_num, user_num. sentence_num)
+        with open(PFILE, 'wb') as pfile:
+            pickle.dump(gen_data, pfile, pickle.HIGHEST_PROTOCOL)
+    return gen_data
+
+def get_gen_data(lang_num, user_num, sentence_num):
+    '''
+    Reads a previously saved dataset
+    '''
+    PFILE = DATA_PATH + PICKLE_FILE
+    if os.path.exists(PFILE):
+        with open(PFILE, 'rb') as pfile:
+            gen_data = pickle.load(pfile)
+        return gen_data
+    return create_gen_data(lang_num, user_num, sentence_num)
+        
+
+def read_csv(fname):
+    '''
+    reads the content of a csv file and
+    returns its results as a generator
+    '''
+    with open(DATA_PATH + fname, 'r') as csv_file:
+        reader = csv.reader(csv_file)
+        # we skip the header
+        reader.next()
+        return [row for row in reader]
+
+if __name__ == '__main__':
+    codes, users, sentences = gen_full_data(LANG_NUM, USER_NUM, SENTENCE_NUM)

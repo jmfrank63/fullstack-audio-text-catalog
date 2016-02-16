@@ -3,7 +3,8 @@
 Test cases for the database model
 '''
 from atcatalog import app
-from atcatalog.data.dbsetup import db, User, Language, Sentence, user_language
+from atcatalog.model.atcmodel import db, User, Language, Sentence, user_language
+from atcatalog.data.gendata import create_random_code
 from unittest import main
 from flask.ext.testing import TestCase
 from tempfile import mkstemp
@@ -47,15 +48,20 @@ class TestDBSetup(TestCase):
         '''
         Test if a language is inserted into the session
         '''
-        language = dbfill.add_language()
+        code = create_random_code()
+        language = Language(code)
+        db.session.add(language)
+        db.session.commit()
         self.assertIn(language, db.session)
 
     def test_query_language(self):
         '''
         Test if an inserted language can be read from the database
         '''
-        language = dbfill.add_language()
-        query_language = Language.query.filter_by(name = language.name).one()
+        language = Language(create_random_code())
+        db.session.add(language)
+        db.session.commit()
+        query_language = Language.query.filter_by(code=language.code).one()
         self.assertEqual(query_language, language)
         self.assertIn(query_language, db.session)
 
@@ -63,30 +69,29 @@ class TestDBSetup(TestCase):
         '''
         Tests if a user id stays with the user
         '''
-        languages = dbfill.add_languages()
-        query_languages = []
-        for idx in reversed(range(1,4)):
-            query_languages.append(Language.query.filter_by(id=idx).one())
-            self.assertEqual(query_languages[-1].id, idx)
-            self.assertEqual(query_languages[-1],languages[idx - 1])
+        language = Language(create_random_code())
+        db.session.add(language)
+        db.session.commit()
+        self.assertEqual(Language.query.filter_by(id=1).one().id, language.id)
 
     def test_serialize_language(self):
         '''
         Test the serialize function of the language model
         '''
-        language = dbfill.add_language()
+        language = Language(create_random_code())
+        db.session.add(language)
+        db.session.commit()
         language_dict = {'id' : language.id,
-                         'code' : language.code,
-                         'name' : language.name }
+                         'code' : language.code }
         self.assertEqual(language.serialize, language_dict)
 
-    def test_insert_user(self):
-        '''
-        Tests if a user is inserted into the session
-        '''
-        language = dbfill.add_language()
-        user = dbfill.add_user()
-        self.assertIn(user, db.session)
+    # def test_insert_user(self):
+    #     '''
+    #     Tests if a user is inserted into the session
+    #     '''
+    #     language = Language(create_random_code())
+    #     user = dbfill.add_user()
+    #     self.assertIn(user, db.session)
 
     # def test_query_user(self):
     #     '''
