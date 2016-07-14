@@ -4,22 +4,25 @@ Test cases for the database model
 '''
 from atcatalog import app
 from atcatalog.model.atcmodel import db, User, Language, Sentence, user_language
-from atcatalog.data.gendata import create_random_code
+from flask.ext.sqlalchemy import SQLAlchemy, SignallingSession
+from atcatalog.data.gendata import create_random_code, \
+                                   create_random_codes, \
+                                   create_random_user_data
 from unittest import main
 from flask.ext.testing import TestCase
 from tempfile import mkstemp
 from functools import partial
 from sqlalchemy import exc
-import atcatalog.data.dbfill as dbfill
-import atcatalog.data.const as const
+from atcatalog.data.dbfill import add_all_languages
+from atcatalog.data.const import *
 import os
 
 
 __author__ = 'Johannes Maria Frank'
 
-class TestDBSetup(TestCase):
+class TestBase(TestCase):
     '''
-    Basic inserting testing of the dbsetup module
+    Base test class and common setup
     '''
     def create_app(self):
         '''
@@ -27,7 +30,7 @@ class TestDBSetup(TestCase):
         '''
         app.config['TESTING'] = True
         self.handle, self.dbname = mkstemp(suffix='.db')
-        app.config['SQLALCHEMY_DATABASE_URI'] = const.DB_PREFIX + self.dbname
+        app.config['SQLALCHEMY_DATABASE_URI'] = DB_PREFIX + self.dbname
         return app
 
     def setUp(self):
@@ -44,9 +47,14 @@ class TestDBSetup(TestCase):
         db.drop_all()
         os.remove(self.dbname)
 
+
+class TestLanguage(TestBase):
+    '''
+    Basic inserting testing of the dbsetup module
+    '''
     def test_insert_language(self):
         '''
-        Test if a language is inserted into the session
+        Test if a language can be inserted into the session
         '''
         code = create_random_code()
         language = Language(code)
@@ -63,7 +71,6 @@ class TestDBSetup(TestCase):
         db.session.commit()
         query_language = Language.query.filter_by(code=language.code).one()
         self.assertEqual(query_language, language)
-        self.assertIn(query_language, db.session)
 
     def test_id_language(self):
         '''
@@ -72,7 +79,7 @@ class TestDBSetup(TestCase):
         language = Language(create_random_code())
         db.session.add(language)
         db.session.commit()
-        self.assertEqual(Language.query.filter_by(id=1).one().id, language.id)
+        self.assertEqual(Language.query.get(1).id, language.id)
 
     def test_serialize_language(self):
         '''
@@ -81,59 +88,83 @@ class TestDBSetup(TestCase):
         language = Language(create_random_code())
         db.session.add(language)
         db.session.commit()
+        db.session.add(language)
         language_dict = {'id' : language.id,
                          'code' : language.code }
         self.assertEqual(language.serialize, language_dict)
 
-    # def test_insert_user(self):
-    #     '''
-    #     Tests if a user is inserted into the session
-    #     '''
-    #     language = Language(create_random_code())
-    #     user = dbfill.add_user()
-    #     self.assertIn(user, db.session)
 
-    # def test_query_user(self):
-    #     '''
-    #     Test if an inserted user can be read from the database
-    #     '''
-    #     dbfill.add_language()
-    #     user = dbfill.add_user()
-    #     query_user = User.query.filter_by(email=user.email).one()
-    #     self.assertEqual(query_user, user)
-    #     self.assertIn(user, db.session)
+class TestUser(TestBase):
+    '''
+    Test the user classs
+    '''
+    def setUp(self):
+        '''
+        User testing specific setup
+        '''
+        super(TestUser, self).setUp()
+        # We must make sure languages are already in the database
+        add_all_languages()
 
-    # def test_id_user(self):
-    #     '''
-    #     Tests if a user id stays with the user
-    #     '''
-    #     dbfill.add_language()
-    #     users = dbfill.add_users()
-    #     query_users = []
-    #     for idx in reversed(range(1,4)):
-    #         query_users.append(User.query.filter_by(id=idx).one())
-    #         self.assertEqual(query_users[-1].id, idx)
-    #         self.assertEqual(query_users[-1],users[idx - 1])
+    def test_insert_user(self):
+        '''
+        Tests if a user can be inserted into the session
+        '''
+        codes = create_random_codes(LANG_NUM)
+        user = User(*create_random_user_data(codes))
+        db.session.add(user)
+        self.assertIn(user, db.session)
 
-#     def test_serialize_user(self):
-#         '''
-#         Test the serialize function of the object
-#         '''
-#         id = 1
-#         name = 'Johannes'
-#         email = 'jmfrank63@gmail.com'
-#         picture = const.MALE_IMAGE
-#         lang_id = 1
-#         languages = []
-#         user_dict = {'id' : id,
-#                      'name' : name,
-#                      'email' : email,
-#                      'picture' : picture,
-#                      'lang_id' : lang_id,
-#                      'languages' : languages}
-#         dbfill.add_language()
-#         user = dbfill.add_user(User(name, email, picture, lang_id, languages))
-#         self.assertEqual(user.serialize, user_dict)
+    def test_query_user(self):
+        '''
+        Test if an inserted user can be read from the database
+        '''
+        codes = create_random_codes(LANG_NUM)
+        user = User(*create_random_user_data(codes))
+        db.session.add(user)
+        db.session.commit()
+        db.session.add(user)
+        query_user = User.query.filter_by(email=user.email).one()
+        self.assertEqual(query_user, user)
+
+    def test_id_user(self):
+        '''
+        Tests if a user id is created
+        '''
+        code = create_random_code()
+        user = User(*create_random_user_data([code]))
+        db.session.add(user)
+        db.session.commit()
+        user = User.query.get(1)
+        self.assertEqual(user.id, 1)
+
+    # def test_serialize_user(self):
+    #     '''
+    #     Test the serialize function of the object
+    #     '''
+    #     codes = create_random_codes(5)
+    #     languages = [Language(code) for code in codes]
+    #     db.session.add_all(languages)
+    #     db.session.commit()
+    #     db.session.add_all(languages)
+    #     user = create_random_user(codes)
+    #     db.session.add(user)
+    #     db.session.commit()
+    #     db.session.add_all(languages)
+    #     db.session.add(user)
+    #     sentences = [create_random_sentence(language, user)
+    #                  for language in languages
+    #                  for _ in xrange(5)]
+    #     db.session.add_all(sentences)
+    #     db.session.commit()
+    #     user_dict = {'id' : user.id,
+    #                  'name' : user.name,
+    #                  'email' : user.email,
+    #                  'codes' : codes,
+    #                  'picture' : user.picture,
+    #                  'languages' : languages,
+    #                  'sentences' : sentences}
+    #     self.assertEqual(user.serialize, user_dict)
 
 #     def test_insert_sentence(self):
 #         '''
@@ -239,7 +270,7 @@ class TestDBSetup(TestCase):
 #         '''
 #         app.config['TESTING'] = True
 #         self.handle, self.dbname = mkstemp(suffix='.db')
-#         app.config['SQLALCHEMY_DATABASE_URI'] = const.DB_PREFIX + self.dbname
+#         app.config['SQLALCHEMY_DATABASE_URI'] = DB_PREFIX + self.dbname
 #         return app
 
 #     def setUp(self):
@@ -292,7 +323,7 @@ class TestDBSetup(TestCase):
 #         '''
 #         Tests adding a sentence without existing user id
 #         '''
-#         sentence = Sentence('Hallo', 'Hello', const.AUDIO_DUMMY, 42, 1)
+#         sentence = Sentence('Hallo', 'Hello', AUDIO_DUMMY, 42, 1)
 #         with self.assertRaises(exc.IntegrityError):
 #             dbfill.add_sentence(sentence)
 
@@ -300,7 +331,7 @@ class TestDBSetup(TestCase):
 #         '''
 #         Tests adding a sentence without existing language id
 #         '''
-#         sentence = Sentence('Hallo', 'Hello', const.AUDIO_DUMMY, 1, 42)
+#         sentence = Sentence('Hallo', 'Hello', AUDIO_DUMMY, 1, 42)
 #         with self.assertRaises(exc.IntegrityError):
 #             dbfill.add_sentence(sentence)
 
@@ -308,7 +339,7 @@ class TestDBSetup(TestCase):
 #         '''
 #         Test add a user without existing language id
 #         '''
-#         user = User('John Doe', 'johndoe@example.com', const.MALE_IMAGE, 42)
+#         user = User('John Doe', 'johndoe@example.com', MALE_IMAGE, 42)
 #         with self.assertRaises(exc.IntegrityError):
 #             dbfill.add_user(user)
 

@@ -5,7 +5,7 @@ from os.path import expanduser
 
 ATC_HOME = expanduser('~') + u'/workspace/'
 # Database
-DATA_PATH = ATC_HOME + u'atcatalog/data/gendata/'
+DATA_PATH = ATC_HOME + u'atcatalog/data/'
 DB_PREFIX = u'sqlite:///'
 DB_PATH = DATA_PATH
 DB_FILE = u'atcdb.db'
@@ -55,13 +55,12 @@ LANG_DICT = { u'bg_BG' : u'Bulgarian',
 AUDIO_DUMMY = u'file:///static/audio/dummy.mp3'
 
 # Storage
-PICKLE_FILE = u'gendata.pck'
 LANGUAGE_FILE = u'languages.csv'
 USER_FILE = u'users.csv'
 SENTENCE_FILE = u'sentences.csv'
 
 # Generated data
-LANG_NUM = 2
-USER_NUM = 3
-SENTENCE_NUM = 4
-DEFAULT_PROBABILITY = 0.
+LANG_NUM = len(LANG_DICT)
+USER_NUM = 20
+SENTENCE_NUM = 32
+DEFAULT_PROBABILITY = 0.5

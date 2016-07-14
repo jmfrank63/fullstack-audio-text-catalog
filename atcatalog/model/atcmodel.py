@@ -6,11 +6,12 @@ from __future__ import unicode_literals, print_function
 from atcatalog import app
 from flask.ext.sqlalchemy import SQLAlchemy, SignallingSession
 from sqlalchemy.ext.associationproxy import association_proxy
-import atcatalog.data.const as const
+from atcatalog.data.const import *
 from sqlalchemy.engine import Engine
-from sqlalchemy import event
+from sqlalchemy import event, and_
 import sqlite3
 import sys
+import os
 
 # For sqlite to force foreign key constraint
 @event.listens_for(Engine, "connect")
@@ -22,8 +23,9 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
        cursor.close()
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = const.DB_URI
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 db = SQLAlchemy(app)
+
 
 # Taken from
 # http://code.activestate.com/recipes/
@@ -59,6 +61,8 @@ def force_encoded_string_output(func):
     else:
         return func
 
+# Taken from
+# https://bitbucket.org/zzzeek/sqlalchemy/wiki/UsageRecipes/UniqueObject
 def _unique(session, cls, hashfunc, queryfunc, constructor, arg, kw):
     cache = getattr(session, '_unique_cache', None)
     if cache is None:
@@ -106,27 +110,60 @@ def unique_constructor(session, hashfunc, queryfunc):
         cls._init = cls.__init__
         cls.__init__ = _null_init
         cls.__new__ = classmethod(__new__)
+
         return cls
 
     return decorate
 
-# helper table for many to many relationship of user and language
+
+class UniqueMixin(object):
+    @classmethod
+    def unique_hash(cls, *arg, **kw):
+        raise NotImplementedError()
+
+    @classmethod
+    def unique_filter(cls, query, *arg, **kw):
+        raise NotImplementedError()
+
+    @classmethod
+    def as_unique(cls, session, *arg, **kw):
+        return _unique(
+                    session,
+                    cls,
+                    cls.unique_hash,
+                    cls.unique_filter,
+                    cls,
+                    arg, kw
+               )
+
+#helper table for many to many relationship of user and language
 user_language =\
     db.Table('user_language',
-             db.Column('user',db.Integer, db.ForeignKey('user.id')),
-             db.Column('language', db.Integer, db.ForeignKey('language.id')))
+             db.Column('user',db.Integer, db.ForeignKey('user.id'), primary_key=True),
+             db.Column('language', db.Integer, db.ForeignKey('language.id'), primary_key=True))
 
+#user_language = UserLanguage()
+
+# We don't use this as there are numerous problems with testing
 # @unique_constructor(db.session,
 #                     lambda code: code,
 #                     lambda query, code: query.filter(Language.code == code)
 # )
-class Language(db.Model):
+class Language(UniqueMixin, db.Model):
     '''
-    Language table
+    Language table as unique class
     '''
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(5), nullable=False, unique=True)
     sentences = db.relationship('Sentence', backref='language')
+
+    @classmethod
+    def unique_hash(cls, code):
+        return code
+
+    @classmethod
+    def unique_filter(cls, query, code):
+        return query.filter(Language.code == code)
 
     def __init__(self, code):
         '''
@@ -149,19 +186,12 @@ class Language(db.Model):
                  'code': self.code }
 
 
-@unique_constructor(db.session,
-                    lambda code: code,
-                    lambda query, code: query.filter(Language.code == code)
-)
-class UniqueLanguage(Language):
-    '''
-    The language class with unique enforced members
-    '''
-
 class User(db.Model):
     '''
     User object holding id, name, email and list of languages
     '''
+    def _check_code(code):
+        return Language.as_unique(db.session, code=code)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -170,7 +200,7 @@ class User(db.Model):
     languages = db.relationship('Language',
                                 secondary=lambda: user_language,
                                 backref='users')
-    codes = association_proxy('languages', 'code')
+    codes = association_proxy('languages', 'code', creator=_check_code)
     sentences = db.relationship('Sentence', backref='user')
 
     def __init__(self, name, email, codes, picture):
@@ -179,7 +209,7 @@ class User(db.Model):
         '''
         self.name = name
         self.email = email
-        self.codes = codes
+        self.codes.extend(codes)
         self.picture = picture
 
     @force_encoded_string_output
@@ -274,6 +304,7 @@ def atcmodel():
     '''
     creates the database
     '''
+    os.remove(DB_PATH + DB_FILE)
     db.create_all()
 
 if __name__ == '__main__':
