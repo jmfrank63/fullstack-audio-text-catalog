@@ -3,7 +3,7 @@
 Test cases for the database model
 '''
 from atcatalog import app
-from atcatalog.model.atcmodel import db, User, Language, Sentence, user_language
+from atcatalog.model.atcmodel import *
 from flask.ext.sqlalchemy import SQLAlchemy, SignallingSession
 from atcatalog.data.gendata import create_random_code, \
                                    create_random_codes, \
@@ -46,6 +46,25 @@ class TestBase(TestCase):
         db.session.remove()
         db.drop_all()
         os.remove(self.dbname)
+
+class TestHelper(TestBase):
+    '''
+    Test the helper functions
+    '''
+    def test_force_encoded_string_output(self):
+        '''
+        Test the string unicode conversion
+        This is a very shallow test mainly to keep
+        code coverage happy
+        '''
+        def test_repr():
+            return 'string'
+        
+        unicode_repr = force_encoded_string_output(test_repr)
+        self.assertEqual(unicode_repr(), u'string')
+        
+    def test_unique(self):
+        pass
 
 
 class TestLanguage(TestBase):

@@ -93,3 +93,9 @@ useless. There is no use in saving generated data and later adding it
 to the database. Just store it directly in the database. That is what
 databases are made for. Now that it seems to work I will put everything
 under test and then hopfully can start to do the frontend.
+
+Fr. 12th of August 2016
+I do not know why I always get so side tracked. But I decided not to give up
+and if it will take another year. The techniques I used are not so bad,
+at least I can start off where I left. Code coverage and unit testing are
+a cool way to go.

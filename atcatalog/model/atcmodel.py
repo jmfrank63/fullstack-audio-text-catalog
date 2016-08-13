@@ -30,93 +30,78 @@ db = SQLAlchemy(app)
 # Taken from
 # http://code.activestate.com/recipes/
 # 466341-guaranteed-conversion-to-unicode-or-byte-string/
-def safe_unicode(obj, *args):
-    """ return the unicode representation of obj """
-    try:
-        return unicode(obj, *args)
-    except UnicodeDecodeError:
-        # obj is byte string
-        ascii_text = str(obj).encode('string_escape')
-        return unicode(ascii_text)
+# def safe_unicode(obj, *args):
+#     """ return the unicode representation of obj """
+#     try:
+#         return unicode(obj, *args)
+#     except UnicodeDecodeError:
+#         # obj is byte string
+#         ascii_text = str(obj).encode('string_escape')
+#         return unicode(ascii_text)
 
-def safe_str(obj):
-    """ return the byte string representation of obj """
-    try:
-        return str(obj)
-    except UnicodeEncodeError:
-        # obj is unicode
-        return unicode(obj).encode('unicode_escape')
+# def safe_str(obj):
+#     """ return the byte string representation of obj """
+#     try:
+#         return str(obj)
+#     except UnicodeEncodeError:
+#         # obj is unicode
+#         return unicode(obj).encode('unicode_escape')
 
+# Decorator taken from:
+# http://stackoverflow.com/questions/3627793/
 def force_encoded_string_output(func):
     '''
-    Decorator taken from:
-    http://stackoverflow.com/questions/3627793/
-    best-output-type-and-encoding-practices-for-repr-functions
+    Best output type and encoding practices for repr functions
     to have encoded __repr__
+    Only needed for python 2
     '''
-    if sys.version_info.major < 3:
-        def _func(*args, **kwargs):
-            return func(*args, **kwargs).encode(sys.stdout.encoding or 'utf-8')
-        return _func
-    else:
-        return func
+    def _func(*args, **kwargs):
+        return func(*args, **kwargs).encode(sys.stdout.encoding or 'utf-8')
+    return _func
 
-# Taken from
+# Idea and code base taken from
 # https://bitbucket.org/zzzeek/sqlalchemy/wiki/UsageRecipes/UniqueObject
-def _unique(session, cls, hashfunc, queryfunc, constructor, arg, kw):
-    cache = getattr(session, '_unique_cache', None)
-    if cache is None:
-        session._unique_cache = cache = {}
-
-    key = (cls, hashfunc(*arg, **kw))
-    if key in cache:
-        return cache[key]
-    else:
-        with session.no_autoflush:
-            q = session.query(cls)
-            q = queryfunc(q, *arg, **kw)
-            obj = q.first()
-            if not obj:
-                obj = constructor(*arg, **kw)
-                session.add(obj)
-        cache[key] = obj
-        return obj
-
-def unique_constructor(session, hashfunc, queryfunc):
-    def decorate(cls):
-        def _null_init(self, *arg, **kw):
-            pass
-        def __new__(cls, bases, *arg, **kw):
-            # no-op __new__(), called
-            # by the loading procedure
-            if not arg and not kw:
-                return object.__new__(cls)
-
-            def constructor(*arg, **kw):
-                obj = object.__new__(cls)
-                obj._init(*arg, **kw)
-                return obj
-
-            return _unique(
-                        session,
-                        cls,
-                        hashfunc,
-                        queryfunc,
-                        constructor,
-                        arg, kw
-                   )
-
-        # note: cls must be already mapped for this part to work
-        cls._init = cls.__init__
-        cls.__init__ = _null_init
-        cls.__new__ = classmethod(__new__)
-
-        return cls
-
-    return decorate
-
-
+# Simplified to fit my needs
 class UniqueMixin(object):
+    '''
+    Class for creating unique session objects
+    A new object is only created if it isn't
+    already in the session
+    '''
+    @staticmethod
+    def unique(session, cls, arg, kw):
+        '''
+        Gets the session cache and checks if object
+        is already in there. Returns finding
+        or new if not found
+        '''
+        
+        # get the session cache
+        cache = getattr(session, '_unique_cache', None)
+        if cache is None:
+            session._unique_cache = cache = {}
+
+        # create a key based on the hash function
+        key = (cls, cls.unique_hash(*arg, **kw))
+        
+        # if found just return our object
+        if key in cache:
+            return cache[key]
+        # the object might not be in the cache
+        # so query the database
+        else:
+            with session.no_autoflush:
+                query = session.query(cls)
+                query = cls.unique_filter(query, *arg, **kw)
+                obj = query.first()
+                # obj still not there then create it
+                # and add it to the session
+                if not obj:
+                    obj = cls(*arg, **kw)
+                    session.add(obj)
+            cache[key] = obj
+            return obj
+
     @classmethod
     def unique_hash(cls, *arg, **kw):
         raise NotImplementedError()
@@ -127,13 +112,11 @@ class UniqueMixin(object):
 
     @classmethod
     def as_unique(cls, session, *arg, **kw):
-        return _unique(
+        return UniqueMixin.unique(
                     session,
                     cls,
-                    cls.unique_hash,
-                    cls.unique_filter,
-                    cls,
-                    arg, kw
+                    arg, 
+                    kw
                )
 
 #helper table for many to many relationship of user and language
