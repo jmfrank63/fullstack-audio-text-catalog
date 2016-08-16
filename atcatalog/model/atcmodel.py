@@ -2,15 +2,15 @@
 '''
 SqlAlchemy Model of the database
 '''
-from __future__ import unicode_literals, print_function
+
 from atcatalog import app
-from flask.ext.sqlalchemy import SQLAlchemy, SignallingSession
-from sqlalchemy.ext.associationproxy import association_proxy
+from ormhelper import *
 from atcatalog.data.const import *
+from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, and_
 import sqlite3
-import sys
 import os
 
 # For sqlite to force foreign key constraint
@@ -22,102 +22,12 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
        cursor.execute("PRAGMA foreign_keys=ON")
        cursor.close()
 
+# set config parameters and set up database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 db = SQLAlchemy(app)
 
 
-# Taken from
-# http://code.activestate.com/recipes/
-# 466341-guaranteed-conversion-to-unicode-or-byte-string/
-# def safe_unicode(obj, *args):
-#     """ return the unicode representation of obj """
-#     try:
-#         return unicode(obj, *args)
-#     except UnicodeDecodeError:
-#         # obj is byte string
-#         ascii_text = str(obj).encode('string_escape')
-#         return unicode(ascii_text)
-
-# def safe_str(obj):
-#     """ return the byte string representation of obj """
-#     try:
-#         return str(obj)
-#     except UnicodeEncodeError:
-#         # obj is unicode
-#         return unicode(obj).encode('unicode_escape')
-
-# Decorator taken from:
-# http://stackoverflow.com/questions/3627793/
-def force_encoded_string_output(func):
-    '''
-    Best output type and encoding practices for repr functions
-    to have encoded __repr__
-    Only needed for python 2
-    '''
-    def _func(*args, **kwargs):
-        return func(*args, **kwargs).encode(sys.stdout.encoding or 'utf-8')
-    return _func
-
-# Idea and code base taken from
-# https://bitbucket.org/zzzeek/sqlalchemy/wiki/UsageRecipes/UniqueObject
-# Simplified to fit my needs
-class UniqueMixin(object):
-    '''
-    Class for creating unique session objects
-    A new object is only created if it isn't
-    already in the session
-    '''
-    @staticmethod
-    def unique(session, cls, arg, kw):
-        '''
-        Gets the session cache and checks if object
-        is already in there. Returns finding
-        or new if not found
-        '''
-        
-        # get the session cache
-        cache = getattr(session, '_unique_cache', None)
-        if cache is None:
-            session._unique_cache = cache = {}
-
-        # create a key based on the hash function
-        key = (cls, cls.unique_hash(*arg, **kw))
-        
-        # if found just return our object
-        if key in cache:
-            return cache[key]
-        # the object might not be in the cache
-        # so query the database
-        else:
-            with session.no_autoflush:
-                query = session.query(cls)
-                query = cls.unique_filter(query, *arg, **kw)
-                obj = query.first()
-                # obj still not there then create it
-                # and add it to the session
-                if not obj:
-                    obj = cls(*arg, **kw)
-                    session.add(obj)
-            cache[key] = obj
-            return obj
-
-    @classmethod
-    def unique_hash(cls, *arg, **kw):
-        raise NotImplementedError()
-
-    @classmethod
-    def unique_filter(cls, query, *arg, **kw):
-        raise NotImplementedError()
-
-    @classmethod
-    def as_unique(cls, session, *arg, **kw):
-        return UniqueMixin.unique(
-                    session,
-                    cls,
-                    arg, 
-                    kw
-               )
 
 #helper table for many to many relationship of user and language
 user_language =\
@@ -125,13 +35,6 @@ user_language =\
              db.Column('user',db.Integer, db.ForeignKey('user.id'), primary_key=True),
              db.Column('language', db.Integer, db.ForeignKey('language.id'), primary_key=True))
 
-#user_language = UserLanguage()
-
-# We don't use this as there are numerous problems with testing
-# @unique_constructor(db.session,
-#                     lambda code: code,
-#                     lambda query, code: query.filter(Language.code == code)
-# )
 class Language(UniqueMixin, db.Model):
     '''
     Language table as unique class
