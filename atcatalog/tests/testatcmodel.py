@@ -47,52 +47,61 @@ class TestBase(TestCase):
         db.drop_all()
         os.remove(self.dbname)
 
-        
+
 
 class TestLanguage(TestBase):
     '''
     Basic inserting testing of the dbsetup module
     '''
+    @classmethod
+    def setUpClass(self):
+        '''
+        create a random language code and use it for all tests
+        '''
+        self.code = create_random_code()
+
+    def setUp(self):
+        '''
+        Add the language to the session and commit
+        '''
+        super(TestLanguage, self).setUp()
+        self.language = Language(self.code)
+        db.session.add(self.language)
+        db.session.commit()
+
     def test_insert_language(self):
         '''
         Test if a language can be inserted into the session
         '''
-        code = create_random_code()
-        language = Language(code)
-        db.session.add(language)
-        db.session.commit()
-        self.assertIn(language, db.session)
+        self.assertIn(self.language, db.session)
 
     def test_query_language(self):
         '''
         Test if an inserted language can be read from the database
         '''
-        language = Language(create_random_code())
-        db.session.add(language)
-        db.session.commit()
-        query_language = Language.query.filter_by(code=language.code).one()
-        self.assertEqual(query_language, language)
+        query_language = Language.query.filter_by(code=self.language.code).one()
+        self.assertEqual(query_language, self.language)
 
     def test_id_language(self):
         '''
         Tests if a user id stays with the user
         '''
-        language = Language(create_random_code())
-        db.session.add(language)
-        db.session.commit()
-        self.assertEqual(Language.query.get(1).id, language.id)
+        self.assertEqual(Language.query.get(1).id, self.language.id)
+
+    def test_repr_language(self):
+        '''
+        Test the repr of the object
+        '''
+        self.assertEqual(self.language.__repr__(),
+                         "<Language(id=1, code='{0}')>".format(self.code))
 
     def test_serialize_language(self):
         '''
         Test the serialize function of the language model
         '''
-        language = Language(create_random_code())
-        db.session.add(language)
-        db.session.commit()
-        db.session.add(language)
-        language_dict = {'id' : language.id,
-                         'code' : language.code }
-        self.assertEqual(language.serialize, language_dict)
+        language_dict = {'id' : self.language.id,
+                         'code' : self.language.code }
+        self.assertEqual(self.language.serialize, language_dict)
 
 
 class TestUser(TestBase):
@@ -101,43 +110,43 @@ class TestUser(TestBase):
     '''
     def setUp(self):
         '''
-        User testing specific setup
+        Add all languages to the database at the beginning of each test
+        create codes to use, create a user and add him to the database
         '''
         super(TestUser, self).setUp()
-        # We must make sure languages are already in the database
         add_all_languages()
+        self.codes = create_random_codes(LANG_NUM)
+        self.user = User(*create_random_user_data(self.codes))
+        db.session.add(self.user)
 
     def test_insert_user(self):
         '''
         Tests if a user can be inserted into the session
         '''
-        codes = create_random_codes(LANG_NUM)
-        user = User(*create_random_user_data(codes))
-        db.session.add(user)
-        self.assertIn(user, db.session)
+        self.assertIn(self.user, db.session)
 
     def test_query_user(self):
         '''
         Test if an inserted user can be read from the database
         '''
-        codes = create_random_codes(LANG_NUM)
-        user = User(*create_random_user_data(codes))
-        db.session.add(user)
-        db.session.commit()
-        db.session.add(user)
-        query_user = User.query.filter_by(email=user.email).one()
-        self.assertEqual(query_user, user)
+        query_user = User.query.filter_by(email=self.user.email).one()
+        self.assertEqual(query_user, self.user)
 
     def test_id_user(self):
         '''
-        Tests if a user id is created
+        Tests if a user id is created and if it is 1
         '''
-        code = create_random_code()
-        user = User(*create_random_user_data([code]))
-        db.session.add(user)
-        db.session.commit()
-        user = User.query.get(1)
-        self.assertEqual(user.id, 1)
+        query_user = User.query.get(1)
+        self.assertEqual(query_user.id, 1)
+
+    def test_repr_user(self):
+        '''
+        Test the repr of the object
+        '''
+        query_user = User.query.get(1)
+        self.assertEqual(query_user.__repr__(),
+                         "<Language(id=1, code='{0}')>")
+
 
     # def test_serialize_user(self):
     #     '''

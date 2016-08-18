@@ -9,15 +9,15 @@ from atcatalog.data.const import *
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.engine import Engine
-from sqlalchemy import event, and_
-import sqlite3
+from sqlalchemy import event
+from sqlite3 import Connection
 import os
 
 # For sqlite to force foreign key constraint
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     # play well with other DB backends
-    if type(dbapi_connection) is sqlite3.Connection:
+    if type(dbapi_connection) is Connection:
        cursor = dbapi_connection.cursor()
        cursor.execute("PRAGMA foreign_keys=ON")
        cursor.close()
@@ -62,7 +62,7 @@ class Language(UniqueMixin, db.Model):
         '''
         String representing the object
         '''
-        return u"<Language(id={0}, code='{1}')>\n\t".format(self.id, self.code)
+        return u"<Language(id={0}, code='{1}')>".format(self.id, self.code)
 
     @property
     def serialize(self):
@@ -103,19 +103,14 @@ class User(db.Model):
         '''
         Pretty print of the object
         '''
-        return u"<User(id={},\n\
-    name='{}',\n\
-    email='{}',\n\
-    codes='{}',\n\
-    picture='{}',\n\
-    languages = '{}',\n\
-    sentences='{}'>  \n".format(self.id,
-                                self.name,
-                                self.email,
-                                self.codes,
-                                self.picture,
-                                self.languages,
-                                self.sentences)
+        return u"<User(id={}, name='{}', email='{}', codes='{}', \
+picture='{}', languages = '{}', sentences='{}'>".format(self.id,
+                                                        self.name,
+                                                        self.email,
+                                                        self.codes,
+                                                        self.picture,
+                                                        self.languages,
+                                                        self.sentences)
 
     @property
     def serialize(self):

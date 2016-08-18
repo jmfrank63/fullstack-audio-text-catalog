@@ -107,3 +107,10 @@ only touches sql and has nothing to do with Flask. So the class
 can be used later on for other purposes. Although I wrote quite
 some code, the code coverage didn't move any further. Hopefully
 tomorrow there will be some progress.
+
+Wed. 17th of August 2016
+Code coverage has now risen to 94%. I finally managed to get
+the UniqueMixin class fully tested. I am eager now to get 100%
+and start with the frontend. But filling the database will be
+a lot of work, so I expect not to be finished before the end
+of the week.
