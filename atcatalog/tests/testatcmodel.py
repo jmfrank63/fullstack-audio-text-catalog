@@ -5,16 +5,14 @@ Test cases for the database model
 from atcatalog import app
 from atcatalog.model.atcmodel import *
 from flask.ext.sqlalchemy import SQLAlchemy, SignallingSession
-from atcatalog.data.gendata import create_random_code, \
-                                   create_random_codes, \
-                                   create_random_user_data
+from atcatalog.data.gendata import *
 from unittest import main
 from flask.ext.testing import TestCase
 from tempfile import mkstemp
 from functools import partial
-from sqlalchemy import exc
-from atcatalog.data.dbfill import add_all_languages
+from sqlalchemy import exc, and_
 from atcatalog.data.const import *
+from random import randint
 import os
 
 
@@ -51,7 +49,7 @@ class TestBase(TestCase):
 
 class TestLanguage(TestBase):
     '''
-    Basic inserting testing of the dbsetup module
+    Test the language class
     '''
     @classmethod
     def setUpClass(self):
@@ -106,18 +104,21 @@ class TestLanguage(TestBase):
 
 class TestUser(TestBase):
     '''
-    Test the user classs
+    Test the user class
     '''
     def setUp(self):
         '''
         Add all languages to the database at the beginning of each test
-        create codes to use, create a user and add him to the database
+        create codes to use,
+        create a user and add him to the database
         '''
         super(TestUser, self).setUp()
-        add_all_languages()
+        db.session.add_all([Language(code) for code in create_all_codes()])
+        db.session.commit()
         self.codes = create_random_codes(LANG_NUM)
         self.user = User(*create_random_user_data(self.codes))
         db.session.add(self.user)
+        db.session.commit()
 
     def test_insert_user(self):
         '''
@@ -129,110 +130,159 @@ class TestUser(TestBase):
         '''
         Test if an inserted user can be read from the database
         '''
-        query_user = User.query.filter_by(email=self.user.email).one()
-        self.assertEqual(query_user, self.user)
+        user = User.query.filter_by(email=self.user.email).one()
+        self.assertEqual(user, self.user)
 
     def test_id_user(self):
         '''
         Tests if a user id is created and if it is 1
         '''
-        query_user = User.query.get(1)
-        self.assertEqual(query_user.id, 1)
+        user = User.query.get(1)
+        self.assertEqual(user.id, 1)
 
     def test_repr_user(self):
         '''
         Test the repr of the object
         '''
-        query_user = User.query.get(1)
-        self.assertEqual(query_user.__repr__(),
-                         "<Language(id=1, code='{0}')>")
+        user = User.query.get(1)
+        self.assertEqual(user.__repr__(),
+                         u"<User(id=1, name='{}', \
+email='{}', \
+codes='{}', \
+picture='{}', \
+languages='{}', \
+sentences='{}')>".format(user.name,
+                          user.email,
+                          user.codes,
+                          user.picture,
+                          user.languages,
+                          user.sentences,
+                         ).encode('utf-8'))
 
 
-    # def test_serialize_user(self):
-    #     '''
-    #     Test the serialize function of the object
-    #     '''
-    #     codes = create_random_codes(5)
-    #     languages = [Language(code) for code in codes]
-    #     db.session.add_all(languages)
-    #     db.session.commit()
-    #     db.session.add_all(languages)
-    #     user = create_random_user(codes)
-    #     db.session.add(user)
-    #     db.session.commit()
-    #     db.session.add_all(languages)
-    #     db.session.add(user)
-    #     sentences = [create_random_sentence(language, user)
-    #                  for language in languages
-    #                  for _ in xrange(5)]
-    #     db.session.add_all(sentences)
-    #     db.session.commit()
-    #     user_dict = {'id' : user.id,
-    #                  'name' : user.name,
-    #                  'email' : user.email,
-    #                  'codes' : codes,
-    #                  'picture' : user.picture,
-    #                  'languages' : languages,
-    #                  'sentences' : sentences}
-    #     self.assertEqual(user.serialize, user_dict)
+    def test_serialize_user(self):
+        '''
+        Test the serialize function of the object
+        '''
+        user = User.query.get(1)
+        user_dict = {'id' : self.user.id,
+                     'name' : self.user.name,
+                     'email' : self.user.email,
+                     'codes' : self.user.codes,
+                     'picture' : self.user.picture,
+                     'languages' : self.user.languages,
+                     'sentences' : self.user.sentences}
+        self.assertEqual(user.serialize, user_dict)
 
-#     def test_insert_sentence(self):
-#         '''
-#         Test if a sentence is inserted into the session
-#         '''
-#         dbfill.add_language()
-#         dbfill.add_user()
-#         sentence = dbfill.add_sentence()
-#         self.assertEqual(sentence.text, 'Hello')
 
-#     def test_query_sentence(self):
-#         '''
-#         Test if an inserted sentence can be read from the database
-#         '''
-#         dbfill.add_language()
-#         dbfill.add_user()
-#         sentence = dbfill.add_sentence()
-#         query_sentence = Sentence.query.filter_by(text='Hello').first()
-#         self.assertEqual(query_sentence, sentence)
-#         self.assertIn(query_sentence, db.session)
+class TestSentence(TestBase):
+    '''
+    Test the sentence class
+    '''
+    def setUp(self):
+        '''
+        Add all languages to the database at the beginning of each test
+        create codes to use,
+        create two users and add them to the database,
+        create a sentence and add it to the database
+        '''
+        super(TestSentence, self).setUp()
+        db.session.add_all([Language(code) for code in create_all_codes()])
+        db.session.commit()
+        self.codes = create_random_codes(LANG_NUM)
+        self.user = User(*create_random_user_data(self.codes))
+        db.session.add(self.user)
+        self.second_user = User(*create_random_user_data(self.codes))
+        db.session.add(self.second_user)
+        db.session.commit()
+        self.language = Language.query.get(randint(1, LANG_NUM))
+        self.sentence = Sentence(*create_random_sentence_data(self.language.id,
+                                                              self.user.id
+                                                             ))
+        db.session.add(self.sentence)
+        db.session.commit()
 
-#     def test_id_sentence(self):
-#         '''
-#         Tests if a user id stays with the user
-#         '''
-#         languages = dbfill.add_languages()
-#         user = dbfill.add_user()
-#         sentences = dbfill.add_sentences()
-#         query_sentences = []
-#         for idx in reversed(range(1,4)):
-#             query_sentences.append(Sentence.query.filter_by(id=idx).one())
-#             self.assertEqual(query_sentences[-1].id, idx)
-#             self.assertEqual(query_sentences[-1],sentences[idx - 1])
 
-#     def test_serialize_sentence(self):
-#         '''
-#         Test the serialize function of the sentence model
-#         '''
-#         id = 1
-#         text = 'Hello'
-#         translation = 'Hello'
-#         audio = 'file:///static/audio/hello.mp3'
-#         user_id = 1
-#         lang_id = 1
-#         sentence_dict = {'id' : id,
-#                          'text' : text,
-#                          'translation' : translation,
-#                          'audio' : audio,
-#                          'user_id' : user_id,
-#                          'lang_id' : lang_id}
-#         dbfill.add_language()
-#         dbfill.add_user()
-#         sentence = dbfill.add_sentence(Sentence(text,
-#                                               translation,
-#                                               audio,
-#                                               user_id,
-#                                               lang_id))
-#         self.assertEqual(sentence.serialize, sentence_dict)
+    def test_insert_sentence(self):
+        '''
+        Test if a sentence is inserted into the session
+        '''
+        self.assertIn(self.sentence, db.session)
+
+    def test_query_sentence(self):
+        '''
+        Test if an inserted sentence can be read from the database
+        '''
+        sentence = Sentence.query.filter_by(text=self.sentence.text).first()
+        query_sentence = Sentence.query.filter(
+             and_(Sentence.text == self.sentence.text,
+                  Sentence.language_id == self.sentence.language_id)
+                 ).one()
+        self.assertEqual(query_sentence, self.sentence)
+
+    def test_id_sentence(self):
+        '''
+        Tests if a user id stays with the user
+        '''
+        language = Language.query.get(1)
+        self.assertEqual(language.id, 1)
+
+    def test_repr_sentence(self):
+        '''
+        Test the repr of the object
+        '''
+        sentence = Sentence.query.get(1)
+        self.assertEqual(sentence.__repr__(),
+                         u"<Sentence(id={}, text='{}', translation='{}', \
+audio='{}', language_id='{}', user_id='{}')>".format(sentence.id,
+                                                        sentence.text,
+                                                        sentence.translation,
+                                                        sentence.audio,
+                                                        sentence.language_id,
+                                                        sentence.user_id,
+                                                       ).encode('utf-8'))
+
+    def test_serialize_sentence(self):
+        '''
+        Test the serialize function of the sentence model
+        '''
+        sentence = Sentence.query.get(1)
+        sentence_dict = {'id' : self.sentence.id,
+                         'text' : self.sentence.text,
+                         'translation' : self.sentence.translation,
+                         'audio' : self.sentence.audio,
+                         'user_id' : self.sentence.user_id,
+                         'language_id' : self.sentence.language_id}
+        self.assertEqual(sentence.serialize, sentence_dict)
+
+class TestATCModel(TestBase):
+    '''
+    Test the removal and recreation of the database
+    '''
+    def test_remove_database(self):
+        '''
+        Test the database file is deleted
+        '''
+        handle, dbname = mkstemp(suffix='.db')
+        remove_database(dbname)
+        self.assertFalse(os.path.exists(dbname))
+
+    def test_atcmodel_new(self):
+        '''
+        Test if database is created when it doesn't exist
+        '''
+        atcmodel(True)
+        self.assertTrue(isSQLite3(self.dbname))
+
+    def test_atcmodel_exists(self):
+        '''
+        Test if the database is reused if it already exists
+        '''
+        db.create_all()
+        existing_dbname = self.dbname
+        atcmodel()
+        self.assertTrue(isSQLite3(existing_dbname))
+        self.assertEqual(existing_dbname, self.dbname)
 
 #     def test_add_language_to_user(self):
 #         '''

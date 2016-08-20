@@ -5,6 +5,19 @@ orm helper functions and classes
 
 from sys import stdout
 
+def isSQLite3(filename):
+    '''
+    Test if a file is an sqlite 3 file
+    Taken from
+    http://stackoverflow.com/questions/12932607
+    and simplyfied for the current need
+    '''
+    with open(filename, 'rb') as filed:
+        header = filed.read(100)
+
+    return header[:16] == 'SQLite format 3\x00'
+
+
 # Decorator for unicode representation taken from:
 # http://stackoverflow.com/questions/3627793/
 def force_encoded_string_output(func):
@@ -33,7 +46,7 @@ class UniqueMixin(object):
         is already in there. Returns finding
         or new if not found
         '''
-        
+
         # check if there is a session cache
         # otherwise create an empty one
         cache = getattr(session, '_unique_cache', None)
@@ -42,7 +55,7 @@ class UniqueMixin(object):
 
         # create a key based on the hash function
         key = (cls, cls.unique_hash(*arg, **kw))
-        
+
         # if found just return our object
         if key in cache:
             return cache[key]
@@ -74,6 +87,6 @@ class UniqueMixin(object):
         return UniqueMixin._unique(
                     session,
                     cls,
-                    arg, 
+                    arg,
                     kw
                )

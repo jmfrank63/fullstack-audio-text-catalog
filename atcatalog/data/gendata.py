@@ -4,7 +4,7 @@ This module provided generating functions for data for testing. It uses the
 orm objects from sqlalchemy.
 '''
 import faker
-import random
+from random import choice, shuffle
 from atcatalog.data.const import *
 from atcatalog.model.atcmodel import *
 
@@ -14,14 +14,14 @@ def create_random_code():
     '''
     Returns a random language code
     '''
-    return random.choice(LANG_DICT.keys())
+    return choice(LANG_DICT.keys())
 
 def create_random_codes(num):
     '''
     Creates a list of language codes in random order
     '''
     codes = LANG_DICT.keys()
-    random.shuffle(codes)
+    shuffle(codes)
     if num >= len(codes):
         return codes
     return codes[:num]
@@ -52,7 +52,7 @@ def create_random_sentence_data(lid, uid):
     If language code is not given the first language code of the user
     is used.
     '''
-    code = random.choice(LANG_DICT.keys())
+    code = choice(LANG_DICT.keys())
     fake = faker.Factory.create(code)
     text = fake.sentence()
     translation = fake.sentence()

@@ -16,11 +16,12 @@ import os
 # For sqlite to force foreign key constraint
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
-    # play well with other DB backends
-    if type(dbapi_connection) is Connection:
-       cursor = dbapi_connection.cursor()
-       cursor.execute("PRAGMA foreign_keys=ON")
-       cursor.close()
+    '''
+    Sets the foreign key constraint for sqlite3
+    '''
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 # set config parameters and set up database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -104,13 +105,13 @@ class User(db.Model):
         Pretty print of the object
         '''
         return u"<User(id={}, name='{}', email='{}', codes='{}', \
-picture='{}', languages = '{}', sentences='{}'>".format(self.id,
-                                                        self.name,
-                                                        self.email,
-                                                        self.codes,
-                                                        self.picture,
-                                                        self.languages,
-                                                        self.sentences)
+picture='{}', languages='{}', sentences='{}')>".format(self.id,
+                                                       self.name,
+                                                       self.email,
+                                                       self.codes,
+                                                       self.picture,
+                                                       self.languages,
+                                                       self.sentences)
 
     @property
     def serialize(self):
@@ -120,9 +121,9 @@ picture='{}', languages = '{}', sentences='{}'>".format(self.id,
         return { 'id': self.id,
                  'name': self.name,
                  'email': self.email,
+                 'codes' : self.codes,
                  'picture': self.picture,
                  'languages': self.languages,
-                 'codes' : self.codes,
                  'sentences' : self.sentences }
 
 
@@ -157,17 +158,13 @@ class Sentence(db.Model):
         '''
         Pretty print of the object
         '''
-        return u"<User(id={},\n\
-      text='{}',\n\
-      translation='{}',\n\
-      audio='{}',\n\
-      language_id='{}',\n\
-      user_id='{}'>\n".format(self.id,
-                    self.text,
-                    self.translation,
-                    self.audio,
-                    self.language_id,
-                    self.user_id)
+        return u"<Sentence(id={}, text='{}', translation='{}', audio='{}', \
+language_id='{}', user_id='{}')>".format(self.id,
+                                          self.text,
+                                          self.translation,
+                                          self.audio,
+                                          self.language_id,
+                                          self.user_id)
 
     @property
     def serialize(self):
@@ -181,11 +178,19 @@ class Sentence(db.Model):
                  'language_id' : self.language_id,
                  'user_id' : self.user_id }
 
-def atcmodel():
+def remove_database(dbfile):
+    '''
+    Deletes the database file
+    '''
+    if os.path.exists(dbfile):
+        os.remove(dbfile)
+
+def atcmodel(new=False):
     '''
     creates the database
     '''
-    os.remove(DB_PATH + DB_FILE)
+    if new:
+        remove_database(DB_PATH + DB_FILE)
     db.create_all()
 
 if __name__ == '__main__':

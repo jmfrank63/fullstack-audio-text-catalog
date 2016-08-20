@@ -11,6 +11,12 @@ DB_PATH = DATA_PATH
 DB_FILE = u'atcdb.db'
 DB_URI = DB_PREFIX + DB_PATH + DB_FILE
 
+# Tests
+TEST_LANGUAGE_FILL = 'TRUE'
+TEST_USER_FILL = 'TRUE'
+TEST_SENTENCE_FILL = 'TRUE'
+TEST_DB_FILL = 'TRUE'
+
 # Users
 IMAGE = u'file:///static/images/male.png'
 MALE_IMAGE = u'file:///static/images/male.png'

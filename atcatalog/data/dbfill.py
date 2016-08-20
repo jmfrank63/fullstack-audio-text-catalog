@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 '''
 This module provides helper functions filling the database with entries
+It mainly consists of there functions filling in
+languages
+users
+sentences
 '''
 from atcatalog.model.atcmodel import *
 from atcatalog.data.gendata import *
 from atcatalog.data.const import *
+from random import randint
 
 def add_all_languages():
     '''
@@ -17,28 +22,31 @@ def add_users(num):
     '''
     Adds num users to the database
     '''
-    for _ in xrange(USER_NUM):
-        codes = create_random_codes(random.randint(1,len(LANG_DICT)))
-        user = create_random_user(codes)
+    for _ in xrange(num):
+        codes = create_random_codes(randint(1,len(LANG_DICT)))
+        user = User(*create_random_user_data(codes))
         db.session.add(user)
         db.session.commit()
 
 def add_sentences(num):
     '''
-    Adds up randomly from one to num sentences for each user to the database
+    Adds a random number of  sentences for each user to the database
+
     '''
     for user in User.query.all():
-        for code in user.languages:
-            db.session.add_all([create_random_sentence(code, user)
-                                for _ in
-                                xrange(random.randint(1,SENTENCE_NUM))])
+        for language in user.languages:
+            sentences = [Sentence(*create_random_sentence_data(language.id,
+                                                               user.id))
+                         for _ in xrange(randint(1,num))
+                        ]
+            db.session.add_all(sentences)
             db.session.commit()
 
 def dbfill(user_num, sentence_num):
     '''
     Fills the database with languages, users and sentences
     '''
-    atcmodel()
+    atcmodel(True)
     add_all_languages()
     add_users(user_num)
     add_sentences(sentence_num)

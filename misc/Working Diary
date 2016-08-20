@@ -114,3 +114,11 @@ the UniqueMixin class fully tested. I am eager now to get 100%
 and start with the frontend. But filling the database will be
 a lot of work, so I expect not to be finished before the end
 of the week.
+
+Sat. 20th of August 2016
+Finally, 100% code coverage of the backend. It was not the best
+idea to write the code and to write the unittest afterward. I
+had to make huge changes to the code to make it testable.
+Some tests were quite challenging for me.
+For the future I will be writing the tests first and then write
+the code. There is a reason everybody is recommending this.
