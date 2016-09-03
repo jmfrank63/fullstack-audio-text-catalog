@@ -7,34 +7,28 @@ from unittest import main
 from flask.ext.testing import TestCase
 
 from random import randint
-from atcatalog.data.fake import LANGUAGES, SENTENCES
+from atcatalog.model.atcmodel import *
+from atcatalog.data.const import LANG_DICT
 from random import randint
+from atcatalog.tests.testatcmodel import TestBase
+from atcatalog.data.dbfill import *
 
 __author__ = 'Johannes Maria Frank'
 
 
-class TestLanguage(TestCase):
+class TestLanguage(TestBase):
     '''
     Basic testing of the language site
     '''
-    def create_app(self):
-        '''
-        Necessary for the flask testing extension module
-        '''
-        app.config['TESTING'] = True
-        return app
-
     def setUp(self):
         '''
-        Setup the database
+        Add all languages to the database
         '''
-        self.lid = randint(0, 4)
-
-    def tearDown(self):
-        '''
-        Drop all tables in the database so we can start again
-        '''
-        pass
+        super(TestLanguage, self).setUp()
+        add_all_languages()
+        self.lid = randint(1, len(LANG_DICT))
+        add_users(3)
+        add_sentences(3)
 
     def test_status_codes(self):
         '''
@@ -54,8 +48,9 @@ class TestLanguage(TestCase):
         Test that language actually show up on page
         '''
         response = self.client.get('/language/{0}/'.format(self.lid))
-        for id, sentence in SENTENCES[self.lid].iteritems():
-            self.assertIn(sentence[1], response.data.decode('utf-8'))
+        sentences = Sentence.query.filter_by(language_id=self.lid)
+        for sentence in sentences:
+            self.assertIn(sentence.text, response.data.decode('utf-8'))
 
 
 if __name__ == '__main__':

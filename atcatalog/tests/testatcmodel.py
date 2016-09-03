@@ -21,6 +21,7 @@ __author__ = 'Johannes Maria Frank'
 class TestBase(TestCase):
     '''
     Base test class and common setup
+    Create a temporary database for testing
     '''
     def create_app(self):
         '''
@@ -46,7 +47,6 @@ class TestBase(TestCase):
         os.remove(self.dbname)
 
 
-
 class TestLanguage(TestBase):
     '''
     Test the language class
@@ -63,6 +63,8 @@ class TestLanguage(TestBase):
         Add the language to the session and commit
         '''
         super(TestLanguage, self).setUp()
+        db.session.add(LanguageDetails(code=self.code, name=LANG_DICT[self.code]))
+        db.session.commit()
         self.language = Language(self.code)
         db.session.add(self.language)
         db.session.commit()
@@ -91,14 +93,15 @@ class TestLanguage(TestBase):
         Test the repr of the object
         '''
         self.assertEqual(self.language.__repr__(),
-                         "<Language(id=1, code='{0}')>".format(self.code))
+                         "<Language(id=1, code='{}')>"
+                         .format(self.code))
 
     def test_serialize_language(self):
         '''
         Test the serialize function of the language model
         '''
         language_dict = {'id' : self.language.id,
-                         'code' : self.language.code }
+                         'code' : self.language.code, }
         self.assertEqual(self.language.serialize, language_dict)
 
 
@@ -113,6 +116,9 @@ class TestUser(TestBase):
         create a user and add him to the database
         '''
         super(TestUser, self).setUp()
+        db.session.add_all([LanguageDetails(code=code, name=LANG_DICT[code])
+                            for code in create_all_codes()])
+        db.session.commit()
         db.session.add_all([Language(code) for code in create_all_codes()])
         db.session.commit()
         self.codes = create_random_codes(LANG_NUM)
@@ -187,6 +193,9 @@ class TestSentence(TestBase):
         create a sentence and add it to the database
         '''
         super(TestSentence, self).setUp()
+        db.session.add_all([LanguageDetails(code=code, name=LANG_DICT[code])
+                            for code in create_all_codes()])
+        db.session.commit()
         db.session.add_all([Language(code) for code in create_all_codes()])
         db.session.commit()
         self.codes = create_random_codes(LANG_NUM)
@@ -207,7 +216,12 @@ class TestSentence(TestBase):
         '''
         Test if a sentence is inserted into the session
         '''
-        self.assertIn(self.sentence, db.session)
+        sentence = Sentence(*create_random_sentence_data( \
+                                            self.language.id,
+                                            self.second_user.id ))
+        db.session.add(sentence)
+        db.session.commit()
+        self.assertIn(sentence, db.session)
 
     def test_query_sentence(self):
         '''
@@ -264,14 +278,14 @@ class TestATCModel(TestBase):
         Test the database file is deleted
         '''
         handle, dbname = mkstemp(suffix='.db')
-        remove_database(dbname)
+        os.remove(dbname)
         self.assertFalse(os.path.exists(dbname))
 
     def test_atcmodel_new(self):
         '''
         Test if database is created when it doesn't exist
         '''
-        atcmodel(True)
+        atcmodel()
         self.assertTrue(isSQLite3(self.dbname))
 
     def test_atcmodel_exists(self):
@@ -283,125 +297,6 @@ class TestATCModel(TestBase):
         atcmodel()
         self.assertTrue(isSQLite3(existing_dbname))
         self.assertEqual(existing_dbname, self.dbname)
-
-#     def test_add_language_to_user(self):
-#         '''
-#         Tests if languages can be added to a user
-#         '''
-#         language = dbfill.add_language()
-#         user = dbfill.add_user()
-#         self.assertFalse(user.languages)
-#         user.languages.append(language)
-#         self.assertIn(language, user.languages)
-
-#     def test_user_in_added_language(self):
-#         '''
-#         Tests if a user is in language after adding the language to the user
-#         '''
-#         language = dbfill.add_language()
-#         user = dbfill.add_user()
-#         self.assertFalse(language.users)
-#         user.languages.append(language)
-#         self.assertIn(user, language.users)
-
-#     def test_add_languages_to_users(self):
-#         '''
-#         Test if multiple languages can be added to multiple users
-#         '''
-#         languages = dbfill.add_languages()
-#         users = dbfill.add_users()
-#         for user in users:
-#             for language in languages:
-#                 user.languages.append(language)
-#         for user in users:
-#             for language in languages:
-#                 self.assertIn(language, user.languages)
-#         for language in user.languages:
-#             for user in users:
-#                 self.assertIn(user, language.users)
-
-# class TestDBConstraints(TestCase):
-#     '''
-#     Basic constraints testing of the dbsetup module
-#     '''
-#     def create_app(self):
-#         '''
-#         Necessary for the flask testing extension module
-#         '''
-#         app.config['TESTING'] = True
-#         self.handle, self.dbname = mkstemp(suffix='.db')
-#         app.config['SQLALCHEMY_DATABASE_URI'] = DB_PREFIX + self.dbname
-#         return app
-
-#     def setUp(self):
-#         '''
-#         Setup the database
-#         '''
-#         db.create_all()
-#         self.language = dbfill.add_language()
-#         self.user = dbfill.add_user()
-#         self.sentence = dbfill.add_sentence()
-
-#     def tearDown(self):
-#         '''
-#         Drop all tables in the database so we can start again
-#         '''
-#         db.session.remove()
-#         db.drop_all()
-#         os.close(self.handle)
-#         os.remove(self.dbname)
-
-#     def test_create_valid_sentence(self):
-#         '''
-#         Test if the sentence contains a valid user and language id
-#         '''
-#         self.assertEqual(self.user.id, self.sentence.user_id)
-#         self.assertEqual(self.language.id, self.sentence.lang_id)
-
-#     def test_fail_unique_user(self):
-#         '''
-#         Test that email must be unique
-#         '''
-#         with self.assertRaises(exc.IntegrityError):
-#             dbfill.add_user()
-
-#     def test_fail_unique_language(self):
-#         '''
-#         Test that language name is unique
-#         '''
-#         with self.assertRaises(exc.IntegrityError):
-#             dbfill.add_language()
-
-#     def test_fail_unique_sentence(self):
-#         '''
-#         Test sentences are unique to a user
-#         '''
-#         with self.assertRaises(exc.IntegrityError):
-#             dbfill.add_sentence()
-
-#     def test_fail_sentence_nonexistent_user(self):
-#         '''
-#         Tests adding a sentence without existing user id
-#         '''
-#         sentence = Sentence('Hallo', 'Hello', AUDIO_DUMMY, 42, 1)
-#         with self.assertRaises(exc.IntegrityError):
-#             dbfill.add_sentence(sentence)
-
-#     def test_fail_sentence_nonexistent_language(self):
-#         '''
-#         Tests adding a sentence without existing language id
-#         '''
-#         sentence = Sentence('Hallo', 'Hello', AUDIO_DUMMY, 1, 42)
-#         with self.assertRaises(exc.IntegrityError):
-#             dbfill.add_sentence(sentence)
-
-#     def test_fail_user_nonexistent_language(self):
-#         '''
-#         Test add a user without existing language id
-#         '''
-#         user = User('John Doe', 'johndoe@example.com', MALE_IMAGE, 42)
-#         with self.assertRaises(exc.IntegrityError):
-#             dbfill.add_user(user)
 
 if __name__ == '__main__':
     main()

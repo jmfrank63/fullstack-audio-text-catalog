@@ -8,10 +8,10 @@
         <h1>Welcome to the language audio text catalog!</h1>
         <h2>Languages:</h2>
         <ul>
-        {% for lang_id, lang_name in languages.items() %}
+        {% for language in languages %}
             <li>
-                <a href="{{ url_for('show_language', lid=lang_id) }}">
-                    {{ lang_name.capitalize() }}
+                <a href="{{ url_for('show_language', lid=language.id) }}">
+                    {{ language.name }}
                 </a>
             </li>
         {% endfor %}

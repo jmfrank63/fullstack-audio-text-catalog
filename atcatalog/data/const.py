@@ -12,15 +12,13 @@ DB_FILE = u'atcdb.db'
 DB_URI = DB_PREFIX + DB_PATH + DB_FILE
 
 # Tests
-TEST_LANGUAGE_FILL = 'TRUE'
-TEST_USER_FILL = 'TRUE'
-TEST_SENTENCE_FILL = 'TRUE'
-TEST_DB_FILL = 'TRUE'
 
-# Users
-IMAGE = u'file:///static/images/male.png'
-MALE_IMAGE = u'file:///static/images/male.png'
-FEMALE_IMAGE = u'file:///static/images/female.png'
+TEST_FILL = 'FALSE'
+
+# User images
+IMAGE = u'images/male.png'
+MALE_IMAGE = u'images/male.png'
+FEMALE_IMAGE = u'images/female.png'
 
 # Languages
 DEFAULT_LANGUAGE = u'en_US'
@@ -58,7 +56,7 @@ LANG_DICT = { u'bg_BG' : u'Bulgarian',
               u'zh_TW' : u'Chinese (Taiwan)' }
 
 # Sentences
-AUDIO_DUMMY = u'file:///static/audio/dummy.mp3'
+AUDIO_DUMMY = u'audio/dummy.mp3'
 
 # Storage
 LANGUAGE_FILE = u'languages.csv'
@@ -67,6 +65,6 @@ SENTENCE_FILE = u'sentences.csv'
 
 # Generated data
 LANG_NUM = len(LANG_DICT)
-USER_NUM = 20
-SENTENCE_NUM = 32
-DEFAULT_PROBABILITY = 0.5
+USER_NUM = 3
+SENTENCE_NUM = 3
+# DEFAULT_PROBABILITY = 0.5

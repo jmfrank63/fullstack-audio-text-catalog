@@ -13,7 +13,7 @@ class TestDBFill(TestBase):
     '''
     Test the dbfill module
     '''
-    @skipIf(getenv('TEST_LANGUAGE_FILL', TEST_LANGUAGE_FILL).upper() != 'TRUE',
+    @skipIf(getenv('TEST_FILL', TEST_FILL).upper() != 'TRUE',
                    "Skipping language filling test")
     def test_add_all_languages(self):
         '''
@@ -23,7 +23,7 @@ class TestDBFill(TestBase):
         languages = Language.query.all()
         self.assertEqual(len(languages), len(LANG_DICT))
 
-    @skipIf(getenv('TEST_USER_FILL', TEST_USER_FILL).upper() != 'TRUE',
+    @skipIf(getenv('TEST_FILL', TEST_FILL).upper() != 'TRUE',
                    "Skipping user filling test")
     def test_add_users(self):
         '''
@@ -36,7 +36,7 @@ class TestDBFill(TestBase):
         users = User.query.all()
         self.assertEqual(len(users), user_num)
 
-    @skipIf(getenv('TEST_SENTENCE_FILL', TEST_SENTENCE_FILL) != 'TRUE',
+    @skipIf(getenv('TEST_FILL', TEST_FILL).upper() != 'TRUE',
                    "Skipping sentence filling test")
     def test_add_languages(self):
         '''
@@ -54,7 +54,7 @@ class TestDBFill(TestBase):
 
         self.assertEqual(len(sentences), user_sentence_sum)
 
-    @skipIf(getenv('TEST_DB_FILL', TEST_DB_FILL) != 'TRUE',
+    @skipIf(getenv('TEST_FILL', TEST_FILL).upper() != 'TRUE',
                    "Skipping database filling test")
     def test_dbfill(self):
         '''

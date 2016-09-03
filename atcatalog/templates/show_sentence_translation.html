@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Sentence {{ sentence[1] }} of user {{ sentence[0]}}</title>
+    <title>Sentence {{ sentence.id }} of user {{ sentence.user_id}}</title>
 </head>
     <body>
-        <h1>Show translation of sentence {{ sid }} of language {{ lid }}</h1>
-        <p>{{ sentence[2]}}</p>
+        <h1>Show translation of sentence {{ sentence.id }} of language {{ sentence.language_id }}</h1>
+        <p>{{ sentence.translation }}</p>
         <p>
-            <a href="{{ url_for('show_sentence', lid=lid, sid=sid) }}">
-                Back to sentence {{ sentence[1] }}
+            <a href="{{ url_for('show_sentence', lid=sentence.language_id, sid=sentence.id) }}">
+                Back to sentence {{ sentence.id }}
             </a>
         </p>
     </body>

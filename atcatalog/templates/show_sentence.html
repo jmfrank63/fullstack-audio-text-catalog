@@ -2,28 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Sentence {{ sentence[1] }} of user {{ sentence[0]}}</title>
+    <title>Sentence with id {{ sentence.id }} of user {{ sentence.user_id}}</title>
 </head>
     <body>
-        <h1>Show the sentence {{ sid }} of language {{ lid }} of user {{ sentence[0] }}</h1>
+        <h1>Show the sentence with id {{ sentence.id }} of language {{ sentence.language_id }} of user {{ sentence.user_id }}</h1>
         <ul>
             <li>Text :
-                <a href="{{ url_for('show_sentence_text', lid=lid, sid=sid) }}">
-                    {{ sentence[1] }}
+                <a href="{{ url_for('show_sentence_text', lid=sentence.language_id, sid=sentence.id) }}">
+                    {{ sentence.text }}
                 </a>
-                <a href="{{ url_for('show_sentence_audio', lid=lid, sid=sid) }}">
-                    <img src="{{ url_for('static', filename='images/rounded-play-button.jpg')}}" height="24">
+            </li>
+            <li>Audio :
+                <a href="{{ url_for('show_sentence_audio', lid=sentence.language_id, sid=sentence.id) }}">
+                    <img src="{{ url_for('static', filename='images/rounded-play-button.jpg')}}" height="12">
                     </img>
                 </a>
             </li>
             <li>Translation :
-                <a href="{{ url_for('show_sentence_translation', lid=lid, sid=sid) }}">
-                    {{ sentence[2] }}
+                <a href="{{ url_for('show_sentence_translation', lid=sentence.language_id, sid=sentence.id) }}">
+                    {{ sentence.translation }}
                 </a>
             </li>
         </ul>
-        <a href="{{ url_for('show_language', lid=lid) }}">
-            Back to language {{ lid }}
+        <a href="{{ url_for('show_language', lid=sentence.language_id) }}">
+            Back to language {{ sentence.language_id.name }}
         </a>
         <br>
         <a href="{{ url_for('show_languages') }}">Back to all languages</a>

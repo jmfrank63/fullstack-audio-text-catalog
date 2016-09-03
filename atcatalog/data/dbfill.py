@@ -5,6 +5,7 @@ It mainly consists of there functions filling in
 languages
 users
 sentences
+The database has to be empty
 '''
 from atcatalog.model.atcmodel import *
 from atcatalog.data.gendata import *
@@ -15,6 +16,9 @@ def add_all_languages():
     '''
     Adds all languages to the database
     '''
+    db.session.add_all([LanguageDetails(code=code, name=LANG_DICT[code])
+                            for code in create_all_codes()])
+    db.session.commit()
     db.session.add_all([Language(code) for code in create_all_codes()])
     db.session.commit()
 
@@ -37,7 +41,7 @@ def add_sentences(num):
         for language in user.languages:
             sentences = [Sentence(*create_random_sentence_data(language.id,
                                                                user.id))
-                         for _ in xrange(randint(1,num))
+                         for _ in xrange(1, randint(2, num + 1))
                         ]
             db.session.add_all(sentences)
             db.session.commit()
@@ -46,7 +50,7 @@ def dbfill(user_num, sentence_num):
     '''
     Fills the database with languages, users and sentences
     '''
-    atcmodel(True)
+    atcmodel()
     add_all_languages()
     add_users(user_num)
     add_sentences(sentence_num)

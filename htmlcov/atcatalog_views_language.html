@@ -25,8 +25,8 @@
         </h1>
         <img id='keyboard_icon' src='keybd_closed.png'>
         <h2 class='stats'>
-            6 statements &nbsp;
-            <span class='run hide_run shortkey_r button_toggle_run'>6 run</span>
+            8 statements &nbsp;
+            <span class='run hide_run shortkey_r button_toggle_run'>8 run</span>
             <span class='mis shortkey_m button_toggle_mis'>0 missing</span>
             <span class='exc shortkey_x button_toggle_exc'>0 excluded</span>
             
@@ -77,7 +77,10 @@
 <p id='n12' class='pln'><a href='#n12'>12</a></p>
 <p id='n13' class='pln'><a href='#n13'>13</a></p>
 <p id='n14' class='stm run hide_run'><a href='#n14'>14</a></p>
-<p id='n15' class='pln'><a href='#n15'>15</a></p>
+<p id='n15' class='stm run hide_run'><a href='#n15'>15</a></p>
+<p id='n16' class='stm run hide_run'><a href='#n16'>16</a></p>
+<p id='n17' class='pln'><a href='#n17'>17</a></p>
+<p id='n18' class='pln'><a href='#n18'>18</a></p>
                 
             </td>
             <td class='text' valign='top'>
@@ -87,15 +90,18 @@
 <p id='t4' class='pln'><span class='str'>&#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
 <p id='t5' class='stm run hide_run'><span class='key'>from</span> <span class='nam'>atcatalog</span> <span class='key'>import</span> <span class='nam'>app</span><span class='strut'>&nbsp;</span></p>
 <p id='t6' class='stm run hide_run'><span class='key'>from</span> <span class='nam'>flask</span> <span class='key'>import</span> <span class='nam'>render_template</span><span class='op'>,</span> <span class='nam'>url_for</span><span class='strut'>&nbsp;</span></p>
-<p id='t7' class='stm run hide_run'><span class='key'>from</span> <span class='nam'>atcatalog</span><span class='op'>.</span><span class='nam'>data</span><span class='op'>.</span><span class='nam'>fake</span> <span class='key'>import</span> <span class='nam'>LANGUAGES</span><span class='op'>,</span> <span class='nam'>SENTENCES</span><span class='strut'>&nbsp;</span></p>
+<p id='t7' class='stm run hide_run'><span class='key'>from</span> <span class='nam'>atcatalog</span><span class='op'>.</span><span class='nam'>model</span><span class='op'>.</span><span class='nam'>atcmodel</span> <span class='key'>import</span> <span class='nam'>db</span><span class='op'>,</span> <span class='nam'>Language</span><span class='op'>,</span> <span class='nam'>User</span><span class='op'>,</span> <span class='nam'>Sentence</span><span class='strut'>&nbsp;</span></p>
 <p id='t8' class='pln'><span class='strut'>&nbsp;</span></p>
 <p id='t9' class='stm run hide_run'><span class='op'>@</span><span class='nam'>app</span><span class='op'>.</span><span class='nam'>route</span><span class='op'>(</span><span class='str'>&#39;/language/&lt;int:lid&gt;/&#39;</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
 <p id='t10' class='pln'><span class='key'>def</span> <span class='nam'>show_language</span><span class='op'>(</span><span class='nam'>lid</span><span class='op'>)</span><span class='op'>:</span><span class='strut'>&nbsp;</span></p>
 <p id='t11' class='pln'>&nbsp; &nbsp; <span class='str'>&#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
 <p id='t12' class='pln'><span class='str'>&nbsp; &nbsp; Show the content of the public language with id = lid</span><span class='strut'>&nbsp;</span></p>
 <p id='t13' class='pln'><span class='str'>&nbsp; &nbsp; &#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
-<p id='t14' class='stm run hide_run'>&nbsp; &nbsp; <span class='key'>return</span> <span class='nam'>render_template</span><span class='op'>(</span><span class='str'>&#39;show_language.html&#39;</span><span class='op'>,</span> <span class='nam'>lid</span><span class='op'>=</span><span class='nam'>lid</span><span class='op'>,</span> <span class='nam'>lang_name</span><span class='op'>=</span><span class='nam'>LANGUAGES</span><span class='op'>[</span><span class='nam'>lid</span><span class='op'>]</span><span class='op'>,</span><span class='strut'>&nbsp;</span></p>
-<p id='t15' class='pln'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>sentences</span><span class='op'>=</span><span class='nam'>SENTENCES</span><span class='op'>[</span><span class='nam'>lid</span><span class='op'>]</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
+<p id='t14' class='stm run hide_run'>&nbsp; &nbsp; <span class='nam'>language</span> <span class='op'>=</span> <span class='nam'>Language</span><span class='op'>.</span><span class='nam'>query</span><span class='op'>.</span><span class='nam'>get</span><span class='op'>(</span><span class='nam'>lid</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
+<p id='t15' class='stm run hide_run'>&nbsp; &nbsp; <span class='nam'>sentences</span> <span class='op'>=</span> <span class='nam'>Sentence</span><span class='op'>.</span><span class='nam'>query</span><span class='op'>.</span><span class='nam'>filter_by</span><span class='op'>(</span><span class='nam'>language_id</span><span class='op'>=</span><span class='nam'>lid</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
+<p id='t16' class='stm run hide_run'>&nbsp; &nbsp; <span class='key'>return</span> <span class='nam'>render_template</span><span class='op'>(</span><span class='str'>&#39;show_language.html&#39;</span><span class='op'>,</span><span class='strut'>&nbsp;</span></p>
+<p id='t17' class='pln'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>language</span><span class='op'>=</span><span class='nam'>language</span><span class='op'>,</span><span class='strut'>&nbsp;</span></p>
+<p id='t18' class='pln'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>sentences</span><span class='op'>=</span><span class='nam'>sentences</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
                 
             </td>
         </tr>

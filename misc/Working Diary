@@ -122,3 +122,10 @@ had to make huge changes to the code to make it testable.
 Some tests were quite challenging for me.
 For the future I will be writing the tests first and then write
 the code. There is a reason everybody is recommending this.
+
+Sat. 3rd of September 2016
+After removing the fake data a lot of changes had to be done. Due
+other activities I did not have a lot of time to work on the code
+changes. Currently the unitests help to remove all the errors introduced
+by moving from fake data to generated data in the database.
+
