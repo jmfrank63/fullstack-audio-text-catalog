@@ -45,13 +45,18 @@ class TestLanguage(TestBase):
 
     def test_sentences_show(self):
         '''
-        Test that language actually show up on page
+        Test that sentences actually show up on page
         '''
         response = self.client.get('/language/{0}/'.format(self.lid))
         sentences = Sentence.query.filter_by(language_id=self.lid)
-        for sentence in sentences:
+        for sentence in sentences: # pragma no branch
             self.assertIn(sentence.text, response.data.decode('utf-8'))
 
+    def test_sentences_empty(self):
+        '''
+        Test that no sentences are displayed properly
+        '''
+        self.fail('Empty sentences not yet implemented')
 
 if __name__ == '__main__':
     main()

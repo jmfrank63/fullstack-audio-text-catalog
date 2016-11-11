@@ -129,3 +129,6 @@ other activities I did not have a lot of time to work on the code
 changes. Currently the unitests help to remove all the errors introduced
 by moving from fake data to generated data in the database.
 
+Thu. 10th of November 2016
+Step by step I try to continue. Restarted again, running the project
+and looking at the failed test. Next implementing empty sentences.

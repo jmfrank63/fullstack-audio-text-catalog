@@ -25,8 +25,8 @@
         </h1>
         <img id='keyboard_icon' src='keybd_closed.png'>
         <h2 class='stats'>
-            28 statements &nbsp;
-            <span class='run hide_run shortkey_r button_toggle_run'>28 run</span>
+            30 statements &nbsp;
+            <span class='run hide_run shortkey_r button_toggle_run'>30 run</span>
             <span class='mis shortkey_m button_toggle_mis'>0 missing</span>
             <span class='exc shortkey_x button_toggle_exc'>2 excluded</span>
             
@@ -117,9 +117,14 @@
 <p id='n52' class='stm run hide_run'><a href='#n52'>52</a></p>
 <p id='n53' class='stm run hide_run'><a href='#n53'>53</a></p>
 <p id='n54' class='pln'><a href='#n54'>54</a></p>
-<p id='n55' class='pln'><a href='#n55'>55</a></p>
-<p id='n56' class='exc'><a href='#n56'>56</a></p>
-<p id='n57' class='exc'><a href='#n57'>57</a></p>
+<p id='n55' class='stm run hide_run'><a href='#n55'>55</a></p>
+<p id='n56' class='pln'><a href='#n56'>56</a></p>
+<p id='n57' class='pln'><a href='#n57'>57</a></p>
+<p id='n58' class='pln'><a href='#n58'>58</a></p>
+<p id='n59' class='stm run hide_run'><a href='#n59'>59</a></p>
+<p id='n60' class='pln'><a href='#n60'>60</a></p>
+<p id='n61' class='exc'><a href='#n61'>61</a></p>
+<p id='n62' class='exc'><a href='#n62'>62</a></p>
                 
             </td>
             <td class='text' valign='top'>
@@ -170,16 +175,21 @@
 <p id='t45' class='pln'><span class='strut'>&nbsp;</span></p>
 <p id='t46' class='stm run hide_run'>&nbsp; &nbsp; <span class='key'>def</span> <span class='nam'>test_sentences_show</span><span class='op'>(</span><span class='nam'>self</span><span class='op'>)</span><span class='op'>:</span><span class='strut'>&nbsp;</span></p>
 <p id='t47' class='pln'>&nbsp; &nbsp; &nbsp; &nbsp; <span class='str'>&#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
-<p id='t48' class='pln'><span class='str'>&nbsp; &nbsp; &nbsp; &nbsp; Test that language actually show up on page</span><span class='strut'>&nbsp;</span></p>
+<p id='t48' class='pln'><span class='str'>&nbsp; &nbsp; &nbsp; &nbsp; Test that sentences actually show up on page</span><span class='strut'>&nbsp;</span></p>
 <p id='t49' class='pln'><span class='str'>&nbsp; &nbsp; &nbsp; &nbsp; &#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
 <p id='t50' class='stm run hide_run'>&nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>response</span> <span class='op'>=</span> <span class='nam'>self</span><span class='op'>.</span><span class='nam'>client</span><span class='op'>.</span><span class='nam'>get</span><span class='op'>(</span><span class='str'>&#39;/language/{0}/&#39;</span><span class='op'>.</span><span class='nam'>format</span><span class='op'>(</span><span class='nam'>self</span><span class='op'>.</span><span class='nam'>lid</span><span class='op'>)</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
 <p id='t51' class='stm run hide_run'>&nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>sentences</span> <span class='op'>=</span> <span class='nam'>Sentence</span><span class='op'>.</span><span class='nam'>query</span><span class='op'>.</span><span class='nam'>filter_by</span><span class='op'>(</span><span class='nam'>language_id</span><span class='op'>=</span><span class='nam'>self</span><span class='op'>.</span><span class='nam'>lid</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
-<p id='t52' class='stm run hide_run'>&nbsp; &nbsp; &nbsp; &nbsp; <span class='key'>for</span> <span class='nam'>sentence</span> <span class='key'>in</span> <span class='nam'>sentences</span><span class='op'>:</span><span class='strut'>&nbsp;</span></p>
+<p id='t52' class='stm run hide_run'>&nbsp; &nbsp; &nbsp; &nbsp; <span class='key'>for</span> <span class='nam'>sentence</span> <span class='key'>in</span> <span class='nam'>sentences</span><span class='op'>:</span> <span class='com'># pragma no branch</span><span class='strut'>&nbsp;</span></p>
 <p id='t53' class='stm run hide_run'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>self</span><span class='op'>.</span><span class='nam'>assertIn</span><span class='op'>(</span><span class='nam'>sentence</span><span class='op'>.</span><span class='nam'>text</span><span class='op'>,</span> <span class='nam'>response</span><span class='op'>.</span><span class='nam'>data</span><span class='op'>.</span><span class='nam'>decode</span><span class='op'>(</span><span class='str'>&#39;utf-8&#39;</span><span class='op'>)</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
 <p id='t54' class='pln'><span class='strut'>&nbsp;</span></p>
-<p id='t55' class='pln'><span class='strut'>&nbsp;</span></p>
-<p id='t56' class='exc'><span class='key'>if</span> <span class='nam'>__name__</span> <span class='op'>==</span> <span class='str'>&#39;__main__&#39;</span><span class='op'>:</span><span class='strut'>&nbsp;</span></p>
-<p id='t57' class='exc'>&nbsp; &nbsp; <span class='nam'>main</span><span class='op'>(</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
+<p id='t55' class='stm run hide_run'>&nbsp; &nbsp; <span class='key'>def</span> <span class='nam'>test_sentences_empty</span><span class='op'>(</span><span class='nam'>self</span><span class='op'>)</span><span class='op'>:</span><span class='strut'>&nbsp;</span></p>
+<p id='t56' class='pln'>&nbsp; &nbsp; &nbsp; &nbsp; <span class='str'>&#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
+<p id='t57' class='pln'><span class='str'>&nbsp; &nbsp; &nbsp; &nbsp; Test that no sentences are displayed properly</span><span class='strut'>&nbsp;</span></p>
+<p id='t58' class='pln'><span class='str'>&nbsp; &nbsp; &nbsp; &nbsp; &#39;&#39;&#39;</span><span class='strut'>&nbsp;</span></p>
+<p id='t59' class='stm run hide_run'>&nbsp; &nbsp; &nbsp; &nbsp; <span class='nam'>self</span><span class='op'>.</span><span class='nam'>fail</span><span class='op'>(</span><span class='str'>&#39;Empty sentences not yet implemented&#39;</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
+<p id='t60' class='pln'><span class='strut'>&nbsp;</span></p>
+<p id='t61' class='exc'><span class='key'>if</span> <span class='nam'>__name__</span> <span class='op'>==</span> <span class='str'>&#39;__main__&#39;</span><span class='op'>:</span><span class='strut'>&nbsp;</span></p>
+<p id='t62' class='exc'>&nbsp; &nbsp; <span class='nam'>main</span><span class='op'>(</span><span class='op'>)</span><span class='strut'>&nbsp;</span></p>
                 
             </td>
         </tr>
