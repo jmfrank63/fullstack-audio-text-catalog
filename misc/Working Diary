@@ -132,3 +132,16 @@ by moving from fake data to generated data in the database.
 Thu. 10th of November 2016
 Step by step I try to continue. Restarted again, running the project
 and looking at the failed test. Next implementing empty sentences.
+
+Sat. 12th of November 2016
+Decided to do a three day intensive work on the application. Starting
+with rearranging the interface. There is no user and no admin capability.
+Layouting by introducing a new level /public /admin /user{id} into the
+application.
+Main goal for the day is therefore to make the interface work. Sample data
+are available.
+So let us start and break everything again.
+---
+Things did not break really and the url_for function made rearranging
+actually really easy.
+But now the login handling has to be done. There is a Flask-Login 

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Login Page{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}
+{% endblock %}
+{% block headline %}
+    <h1>
+        Please choose one of the follwing providers to login:
+    </h1>
+{% endblock %}
+{% block content %}
+        <h2>Sentences:</h2>
+        <ul>
+            <li>Google</li>
+            <li>Facebook</li>
+            <li>LinkedIn</li>
+            <li>Github</li>
+            <li>Twitter</li>
+            <li>
+                <a href="{{ url_for('mock_login') }}">Mock login</a>
+            </li>
+        </ul>
+{% endblock %}

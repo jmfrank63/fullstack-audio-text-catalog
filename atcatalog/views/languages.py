@@ -8,11 +8,9 @@ from atcatalog.model.atcmodel import Language
 
 
 @app.route('/')
-def show_languages():
+def languages():
     ''' Show all public language
     '''
     languages = Language.query.all()
-    return render_template('show_languages.html', 
+    return render_template('languages.html', 
                            languages=languages)
-
-

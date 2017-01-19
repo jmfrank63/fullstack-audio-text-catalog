@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}" type="text/css" />
+        <title>
+            {% block title %}Default Title{% endblock %}
+        </title>
+    {% endblock %}
+</head>
+<body>
+    <div id="header">
+        {% block header %}
+            <p>Default Header</p>
+        {% endblock %}
+    </div>
+    <div id="headline">
+        {% block headline %}
+            <h1>Default Headline</h1>
+        {% endblock %}
+    </div>
+    <div id="content">
+        {% block content %}
+            <p>Default Content</p>
+        {% endblock %}
+    </div>
+    <div id="footer">
+        {% block footer %}
+            <a href="{{ url_for('frontpage') }}">Back To Frontpage</a>
+        {% endblock %}
+    </div>
+    <p>Breadcrumbs:</p>
+    <div>
+        {%- for breadcrumb in breadcrumbs -%}
+            <a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
+            {{ '/' if not loop.last }}
+        {%- endfor -%}
+    </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}User Page{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='userpage.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}
+    <a href="{{ url_for('login') }}">User login</a>
+{% endblock %}
+{% block headline %}
+    <h1>Welcome to the user page</h1>
+{% endblock %}
+{% block content %}
+    <h2>User Languages:</h2>
+    <ul>
+    {% for language in languages %}
+        <li>
+            <a href="{{ url_for('language', lid=language.id) }}">
+                {{ language.name }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+{% block footer%}
+<p>You Are On The Userpage</p>
+{% endblock %}

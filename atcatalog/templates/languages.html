@@ -10,11 +10,12 @@
         <ul>
         {% for language in languages %}
             <li>
-                <a href="{{ url_for('show_language', lid=language.id) }}">
+                <a href="{{ url_for('language', lid=language.id) }}">
                     {{ language.name }}
                 </a>
             </li>
         {% endfor %}
         </ul>
+        <a href="{{ url_for('frontpage') }}">Back to Frontpage</a>
     </body>
 </html>

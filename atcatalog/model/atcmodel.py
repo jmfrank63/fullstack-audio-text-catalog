@@ -7,6 +7,7 @@ from atcatalog import app
 from ormhelper import *
 from atcatalog.data.const import *
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.login import UserMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, UniqueConstraint
@@ -83,7 +84,7 @@ class Language(UniqueMixin, db.Model):
                  'code': self.code}
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     '''
     User object holding id, name, email and list of languages
     '''

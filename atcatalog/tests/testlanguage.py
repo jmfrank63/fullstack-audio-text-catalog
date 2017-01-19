@@ -52,11 +52,11 @@ class TestLanguage(TestBase):
         for sentence in sentences: # pragma no branch
             self.assertIn(sentence.text, response.data.decode('utf-8'))
 
-    def test_sentences_empty(self):
+    def test_no_sentences_(self):
         '''
         Test that no sentences are displayed properly
         '''
-        self.fail('Empty sentences not yet implemented')
+        self.fail('No sentences not yet implemented')
 
 if __name__ == '__main__':
     main()

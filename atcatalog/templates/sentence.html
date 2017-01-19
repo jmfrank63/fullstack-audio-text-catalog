@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Sentence with id {{ sentence.id }} of user {{ sentence.user_id}}{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='language.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}
+    <a href="{{ url_for('login') }}">User login</a>
+{% endblock %}
+{% block headline %}
+    <h1>
+        The sentence with id {{ sentence.id }} of language {{ sentence.language_id }}
+        of user {{ sentence.user_id }}
+    </h1>
+{% endblock %}
+{% block content %}
+        <h2>Sentence:</h2>
+        <ul>
+            <li>Text :
+                <a href="{{ url_for('sentence_text', lid=sentence.language_id, sid=sentence.id) }}">
+                    {{ sentence.text }}
+                </a>
+            </li>
+            <li>Audio :
+                <a href="{{ url_for('sentence_audio', lid=sentence.language_id, sid=sentence.id) }}">
+                    <img src="{{ url_for('static', filename='images/rounded-play-button.jpg')}}" height="12">
+                    </img>
+                </a>
+            </li>
+            <li>Translation :
+                <a href="{{ url_for('sentence_translation', lid=sentence.language_id, sid=sentence.id) }}">
+                    {{ sentence.translation }}
+                </a>
+            </li>
+        </ul>
+{% endblock %}
+{% block footer %}
+<a href="{{ url_for('frontpage') }}">
+    Back to Frontpage
+</a>
+{% endblock %}
