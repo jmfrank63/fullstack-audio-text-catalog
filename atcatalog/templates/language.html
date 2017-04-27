@@ -16,19 +16,17 @@
 {% block content %}
         <h2>Sentences:</h2>
         <ul>
-            {% for sentence in sentences %}
-                <li>
-                    <a href="{{ url_for('sentence',
-                                         lid=language.id,
-                                         sid=sentence.id) }}">
-                        {{ sentence.text }}
-                    </a>
-                </li>
-            {% endfor %}
+        {% for sentence in sentences %}
+            <li>
+                <a href="{{ url_for('sentence',
+                                     lid=language.id,
+                                     sid=sentence.id) }}">
+                    {{ sentence.text }}
+                </a>
+            </li>
+        {% endfor %}
         </ul>
 {% endblock %}
 {% block footer %}
-<a href="{{ url_for('frontpage') }}">
-    Back to Frontpage
-</a>
+    <p>You Are On The Language Page</p>
 {% endblock %}

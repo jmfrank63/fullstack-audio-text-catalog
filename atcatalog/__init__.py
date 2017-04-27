@@ -18,5 +18,5 @@ Breadcrumbs(app=app)
 
 import atcatalog.views.frontpage
 import atcatalog.views.languages
-import atcatalog.views.language
+#import atcatalog.views.language
 import atcatalog.views.sentence
