@@ -26,27 +26,5 @@
         </a>
 {% endblock %}
 {% block footer %}
-<a href="{{ url_for('frontpage') }}">
-    Back to Frontpage
-</a>
+<p>You are on the sentence audio page</p>
 {% endblock %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Sentence {{ sentence.id }} of user {{ sentence.user_id}}</title>
-</head>
-    <body>
-        <h1>Show audio of sentence {{ sentence.id }} of language {{ sentence.language_id }}</h1>
-        <audio controls preload="auto" autoplay>
-          <source src="{{ url_for('static', filename=sentence.audio) }}" type="audio/mpeg">
-          Your browser does not support the audio tag.
-        </audio>
-        <p>
-            <a href="{{ url_for('sentence', lid=sentence.language_id, sid=sentence.id) }}">
-                Back to sentence {{ sentence.id }}
-            </a>
-        </p>
-    </<body>
-</html>

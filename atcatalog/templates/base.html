@@ -14,7 +14,12 @@
     <div id="site">
         <div id="header">
             {% block header %}
-                <p>Default Header</p>
+                {% if current_user.is_authenticated %}
+                    <p>{{ current_user.name }} Id {{ current_user.id }}</p>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">User login</a>
+                {% endif %}
             {% endblock %}
         </div>
         <div id="main">

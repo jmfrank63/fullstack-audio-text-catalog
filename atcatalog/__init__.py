@@ -17,6 +17,7 @@ login_manager.init_app(app)
 Breadcrumbs(app=app)
 
 import atcatalog.views.frontpage
+import atcatalog.views.users
 import atcatalog.views.languages
-#import atcatalog.views.language
+import atcatalog.views.language
 import atcatalog.views.sentence

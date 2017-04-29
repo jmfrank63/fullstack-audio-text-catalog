@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='userpage.css') }}" type="text/css" />
 {% endblock %}
 {% block header %}
-    <a href="{{ url_for('login') }}">User login</a>
+    {{ super() }}
 {% endblock %}
 {% block headline %}
     <h1>Welcome to the user page</h1>
