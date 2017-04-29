@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Text of sentence {{ sentence.id }} of user {{ sentence.user_id}}{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='language.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}
+    <a href="{{ url_for('login') }}">User login</a>
+{% endblock %}
+{% block headline %}
+    <h1>
+            The text of sentence with id {{ sentence.id }} of language {{ sentence.language_id }}
+            belonging to user {{ sentence.user_id }}
+        </h1>
+{% endblock %}
+{% block content %}
+        <h2>Text:</h2>
+        <p>{{ sentence.text }}</p>
+        <p>
+            <a href="{{ url_for('sentence', lid=sentence.language_id, sid=sentence.id) }}">
+                Back to sentence {{ sentence.id }}
+            </a>
+        </p>
+{% endblock %}
+{% block footer %}
+<p>You are on the sentence text page</p>
+{% endblock %}

@@ -2,20 +2,20 @@
 {% block title %}User Page{% endblock %}
 {% block head %}
   {{ super() }}
-  <link rel="stylesheet" href="{{ url_for('static', filename='userpage.css') }}" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='user_languages.css') }}" type="text/css" />
 {% endblock %}
 {% block header %}
     {{ super() }}
 {% endblock %}
 {% block headline %}
-    <h1>Welcome to the user page</h1>
+    <h1>Welcome to the user languages page</h1>
 {% endblock %}
 {% block content %}
     <h2>User Languages:</h2>
     <ul>
     {% for language in languages %}
         <li>
-            <a href="{{ url_for('language', lid=language.id) }}">
+            <a href="{{ url_for('user_language', uid=current_user.id, lid=language.id) }}">
                 {{ language.name }}
             </a>
         </li>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Public Language {{ language.name }}{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='user_language.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}
+    {{ super() }}
+{% endblock %}
+{% block headline %}
+    <h1>
+        Language {{ language.name }} with id {{ language.id }} of
+        user {{ current_user.name }} with id {{ current_user.id }}:
+    </h1>
+{% endblock %}
+{% block content %}
+        <h2>Sentences:</h2>
+        <ul>
+        {% for sentence in sentences %}
+            <li>
+                <a href="{{ url_for('user_sentence',
+                                     uid=current_user.id,
+                                     lid=language.id,
+                                     sid=sentence.id) }}">
+                    {{ sentence.text }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+{% endblock %}

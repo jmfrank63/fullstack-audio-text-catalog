@@ -19,12 +19,12 @@ def load_user(uid):
     '''
     return User.query.get(int(uid))
 
-def view_userpage(*args, **kwargs):
+def view_user_languages(*args, **kwargs):
     ''' Construct a user name for breadcrumbs
     '''
     uid = request.view_args['uid']
     user = User.query.get(uid)
-    return [{'text' : u"User {}".format(user.name),
+    return [{'text' : u"{}".format(user.name),
              'url' : "/user/{}/".format(uid)}]
 
 class LoginForm(FlaskForm):
@@ -41,7 +41,7 @@ def login():
         try:
             user = User.query.filter_by(email=email).one()
             login_user(user)
-            return redirect(url_for('userpage', uid=user.id))
+            return redirect(url_for('user_languages', uid=user.id))
         except NoResultFound:
             user = None
         return redirect(url_for('login'))
@@ -49,14 +49,14 @@ def login():
 
 @app.route('/user/<int:uid>/')
 @login_required
-@register_breadcrumb(app, '.user', 'User', dynamic_list_constructor=view_userpage)
-def userpage(uid):
+@register_breadcrumb(app, '.user', 'User', dynamic_list_constructor=view_user_languages)
+def user_languages(uid):
     ''' Show the user page
     '''
     if current_user.id == uid:
         user = User.query.get(uid)
         languages = Language.query.filter(Language.code.in_(user.codes)).all()
-        return render_template('userpage.html', user=user,languages=languages)
+        return render_template('user_languages.html', user=user,languages=languages)
     return redirect(url_for('login'))
 
 @app.route('/logout')
@@ -66,4 +66,5 @@ def logout():
     Logouts the user
     '''
     logout_user()
-    return(redirect(url_for('frontpage')))
+    return(redirect(url_for('home')))
+

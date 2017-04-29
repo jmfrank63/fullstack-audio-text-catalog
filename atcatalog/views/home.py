@@ -9,11 +9,11 @@ from atcatalog.model.atcmodel import User, Language, Sentence
 
 @app.route('/')
 @register_breadcrumb(app, '.', 'Home')
-def frontpage():
+def home():
     ''' Show the welcome page
     '''
     languages = Language.query.all()
-    return render_template('frontpage.html', languages=languages)
+    return render_template('home.html', languages=languages)
 
 @app.route('/mock_login')
 def mock_login():
