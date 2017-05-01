@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='user_sentence.css') }}" type="text/css" />
 {% endblock %}
 {% block header %}
-    <a href="{{ url_for('login') }}">User login</a>
+    {{ super() }}
 {% endblock %}
 {% block headline %}
     <h1>
@@ -17,23 +17,31 @@
         <h2>Sentence:</h2>
         <ul>
             <li>Text :
-                <a href="{{ url_for('user_sentence_text', lid=sentence.language_id, sid=sentence.id) }}">
+                <a href="{{ url_for('user_sentence_text',
+                                    uid=current_user.id,
+                                    lid=sentence.language_id,
+                                    sid=sentence.id) }}">
                     {{ sentence.text }}
                 </a>
             </li>
             <li>Audio :
-                <a href="{{ url_for('user_sentence_audio', lid=sentence.language_id, sid=sentence.id) }}">
+                <a href="{{ url_for('user_sentence_audio',
+                                    uid=current_user.id,
+                                    lid=sentence.language_id,
+                                    sid=sentence.id) }}">
                     <img src="{{ url_for('static', filename='images/rounded-play-button.jpg')}}" height="12">
                     </img>
                 </a>
             </li>
             <li>Translation :
-                <a href="{{ url_for('user_sentence_translation', lid=sentence.language_id, sid=sentence.id) }}">
+                <a href="{{ url_for('user_sentence_translation',
+                                    uid=current_user.id,
+                                    lid=sentence.language_id,
+                                    sid=sentence.id) }}">
                     {{ sentence.translation }}
                 </a>
             </li>
         </ul>
 {% endblock %}
 {% block footer %}
-<p>You Are On The Sentence Page</p>
 {% endblock %}

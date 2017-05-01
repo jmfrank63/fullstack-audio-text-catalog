@@ -13,7 +13,7 @@
 {% endblock %}
 {% block content %}
         <h2>Providers:</h2>
-        <form method="POST" action="/login">
+        <form method="POST" action={{ url_for('login', next=next) }}>
             {{ form.csrf_token }}
             {{ form.email.label }} {{ form.email(size=20) }}
             <input type="submit" value="Go">

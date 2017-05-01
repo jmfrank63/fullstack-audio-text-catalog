@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='language.css') }}" type="text/css" />
 {% endblock %}
 {% block header %}
-    <a href="{{ url_for('login') }}">User login</a>
+    {{ super() }}
 {% endblock %}
 {% block headline %}
     <h1>
@@ -28,5 +28,4 @@
         </ul>
 {% endblock %}
 {% block footer %}
-    <p>You Are On The Language Page</p>
 {% endblock %}

@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='language.css') }}" type="text/css" />
 {% endblock %}
 {% block header %}
-    <a href="{{ url_for('login') }}">User login</a>
+    {{ super() }}
 {% endblock %}
 {% block headline %}
     <h1>
@@ -17,12 +17,6 @@
 {% block content %}
         <h2>Translation:</h2>
         <p>{{ sentence.translation }}</p>
-        <p>
-            <a href="{{ url_for('sentence', lid=sentence.language_id, sid=sentence.id) }}">
-                Back to sentence {{ sentence.id }}
-            </a>
-        </p>
 {% endblock %}
 {% block footer %}
-<p>You are on the sentence translation page</p>
 {% endblock %}

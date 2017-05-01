@@ -10,12 +10,12 @@
         {% for user in users %}
             <li>
                 <p>{{ user.id }} {{ user.name }} </p>
-                <a href="{{ url_for('userpage', uid=user.id) }}">
+                <a href="{{ url_for('user_languages', uid=user.id) }}">
                    {{ user.email }}
                 </a>
             </li>
         {% endfor %}
         </ul>
-        <a href="{{ url_for('frontpage') }}">Back to frontpage</a>
+        <a href="{{ url_for('home') }}">Back to frontpage</a>
     </body>
 </html>

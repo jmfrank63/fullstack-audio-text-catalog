@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='language.css') }}" type="text/css" />
 {% endblock %}
 {% block header %}
-    <a href="{{ url_for('login') }}">User login</a>
+    {{ super() }}
 {% endblock %}
 {% block headline %}
     <h1>
@@ -20,11 +20,7 @@
             <source src="{{ url_for('static', filename=sentence.audio) }}" type="audio/mpeg">
             Your browser does not support the audio tag.
         </audio>
-        <p>
-        <a href="{{ url_for('sentence', lid=sentence.language_id, sid=sentence.id) }}">
-            Back to sentence {{ sentence.id }}
-        </a>
+
 {% endblock %}
 {% block footer %}
-<p>You are on the sentence audio page</p>
 {% endblock %}

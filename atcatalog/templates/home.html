@@ -21,7 +21,18 @@
         </li>
     {% endfor %}
     </ul>
+    {% if current_user.is_authenticated %}
+        <h2>User Languages:</h2>
+        <ul>
+            {% for language in user_languages %}
+                <li>
+                    <a href="{{ url_for('user_language', uid=current_user.id, lid=language.id) }}">
+                        {{ language.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}
 {% block footer%}
-<p>You Are On The Front Page</p>
 {% endblock %}
