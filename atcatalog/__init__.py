@@ -16,9 +16,7 @@ login_manager.init_app(app)
 login_manager.login_view = "/login"
 Breadcrumbs(app=app)
 
-
 import atcatalog.views.home
 import atcatalog.views.users
-import atcatalog.views.languages
 import atcatalog.views.language
 import atcatalog.views.sentence

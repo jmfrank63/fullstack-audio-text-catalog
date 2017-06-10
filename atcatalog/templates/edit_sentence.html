@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Edit Sentence {{ sentence.id }}{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='edit_sentence.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}
+    {{ super() }}
+{% endblock %}
+{% block headline %}
+    <h1>
+        The sentence with id {{ sentence.id }} has currently these properties:
+    </h1>
+{% endblock %}
+{% block content %}
+        <h2>Edit your sentence:</h2>
+        <form method="POST" action={{ url_for('edit_sentence', uid=user.id, lid=language.id, sid=sentence.id) }}>
+            {{ form.csrf_token }}
+            {{ form.text.label }} {{ form.text(size=40) }}
+            {{ form.translation.label }} {{ form.translation(size=40) }}
+            {{ form.audio.label }} {{ form.audio(size=40) }}
+            <input type="submit" value="Edit">
+        </form>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Edit Language {{ language.name }}{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='edit_language.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}
+    {{ super() }}
+{% endblock %}
+{% block headline %}
+    <h1>
+        The language with id {{ language.id }} is currently named {{ language.name }}
+    </h1>
+{% endblock %}
+{% block content %}
+        <h2>Edit your language name:</h2>
+        <form method="POST" action={{ url_for('editlanguage', uid=user.id, lid=language.id) }}>
+            {{ form.csrf_token }}
+            {{ form.name.label }} {{ form.name(size=40) }}
+            <input type="submit" value="Edit">
+        </form>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+{% endblock %}

@@ -24,6 +24,11 @@
                                      sid=sentence.id) }}">
                     {{ sentence.text }}
                 </a>
+                {% if current_user.is_authenticated %}
+                <form action="{{ url_for('edit_sentence', uid=current_user.id, lid=language.id, sid=sentence.id) }}">
+                        <input type="submit" value="Edit" />
+                </form>
+                {% endif %}
             </li>
         {% endfor %}
         </ul>

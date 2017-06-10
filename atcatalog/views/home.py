@@ -23,9 +23,9 @@ def home():
                             languages=languages,
                             user_languages=user_languages)
 
-@app.route('/mock_login')
-def mock_login():
+@app.route('/list_login')
+def list_login():
     ''' A page showing all users for testing
     '''
     users = User.query.all()
-    return render_template('mock_login.html', users=users)
+    return render_template('list_login.html', users=users)

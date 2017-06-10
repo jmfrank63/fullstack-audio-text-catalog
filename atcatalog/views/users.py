@@ -26,7 +26,7 @@ def load_user(uid):
 # Therefore we write our own decorator
 # Used http://stackoverflow.com/questions/19376165/flask-pluggable-views-and-login-required
 def user_required(func):
-    ''' 
+    '''
     Check for correct user id in additon to authenticated
     '''
     @wraps(func)
@@ -71,6 +71,9 @@ def get_uid_from_url(url):
         return None
 
 class LoginForm(FlaskForm):
+    '''
+    Get the user email for login
+    '''
     email = StringField('E-Mail', validators=[DataRequired()])
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -78,26 +81,24 @@ class LoginForm(FlaskForm):
 def login():
     ''' Show the login page
     '''
+    if current_user.is_authenticated:
+        return redirect(url_for('logout'))
     login_form = LoginForm()
-    next = request.args.get('next')
     if login_form.validate_on_submit():
         email = request.form['email']
         try:
             user = User.query.filter_by(email=email).one()
             login_user(user)
-            if not is_safe_url(next):
-                next = None
-            return redirect(next or url_for('user_languages', uid=user.id))
+            return redirect(url_for('user_languages', uid=user.id))
         except NoResultFound:
-            user = None
-        return redirect(url_for('login'))
-    return render_template('login.html', form=login_form, next=next)
+            return redirect(url_for('login'))
+    return render_template('login.html', form=login_form)
 
 @app.route('/user/<int:uid>/')
 @user_required
 @register_breadcrumb(app, '.user', 'User', dynamic_list_constructor=view_user_languages)
 def user_languages(uid):
-    ''' Show the user page
+    ''' Show the user page with languages and edit options
     '''
     user = User.query.get(uid)
     languages = Language.query.filter(Language.code.in_(user.codes)).all()

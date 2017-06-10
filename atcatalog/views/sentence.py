@@ -5,9 +5,12 @@ Public text views
 from atcatalog import app
 from atcatalog.views.users import user_required
 from atcatalog.model.atcmodel import Language, User, Sentence
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from flask_breadcrumbs import register_breadcrumb
-
+from flask_wtf import FlaskForm
+from sqlalchemy.orm.exc import NoResultFound
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired
 
 
 # Public languages
@@ -60,15 +63,15 @@ def sentence_audio(lid, sid):
     sentence = Sentence.query.filter_by(language_id=lid, id=sid).one()
     return render_template('sentence_audio.html', sentence=sentence)
 
-# User language and sentences
-# ---------------------------
+# User Sentence
+# -------------
 def view_user_sentence(*args, **kwargs):
     ''' Construct the sentence name for breadcrumbs
     '''
     uid = request.view_args['uid']
     lid = request.view_args['lid']
     sid = request.view_args['sid']
-    sentence = Sentence.query.filter_by(user_id=uid, 
+    sentence = Sentence.query.filter_by(user_id=uid,
                                         language_id=lid,
                                         id=sid).one()
     return [{'text' : u"Sentence {}".format(sentence.id),
@@ -77,7 +80,7 @@ def view_user_sentence(*args, **kwargs):
 
 @app.route('/user/<int:uid>/language/<int:lid>/sentence/<int:sid>/')
 @user_required
-@register_breadcrumb(app, '.user.language.sentence', 'Sentence', 
+@register_breadcrumb(app, '.user.language.sentence', 'Sentence',
                      dynamic_list_constructor=view_user_sentence)
 def user_sentence(uid, lid, sid):
     '''
@@ -117,3 +120,64 @@ def user_sentence_audio(uid, lid, sid):
     '''
     sentence = Sentence.query.filter_by(user_id=uid, language_id=lid, id=sid).one()
     return render_template('user_sentence_audio.html', sentence=sentence)
+
+# Edit User Sentence
+# ------------------
+def view_edit_sentence(*args, **kwargs):
+    ''' Construct the sentence name for breadcrumbs
+    '''
+    uid = request.view_args['uid']
+    lid = request.view_args['lid']
+    sid = request.view_args['sid']
+    sentence = Sentence.query.filter_by(user_id=uid,
+                                        language_id=lid,
+                                        id=sid).one()
+    return [{'text' : u"Edit Sentence {}".format(sentence.id),
+             'url' : '/user/{}/language/{}/sentence/{}/'
+             .format(uid, lid, sid) }]
+
+class SentenceEditForm(FlaskForm):
+    '''
+    Get the new sentence name
+    '''
+    text = StringField('Text', validators=[DataRequired()])
+    translation = StringField('Translation', validators=[DataRequired()])
+    audio = StringField('Audio', validators=[DataRequired()])
+
+@app.route('/user/<int:uid>/language/<int:lid>/edit_sentence/<int:sid>/')
+@user_required
+@register_breadcrumb(app, '.user.language.edit_sentence', 'Edit Sentence',
+                     dynamic_list_constructor=view_edit_sentence)
+def edit_sentence(uid, lid, sid):
+    '''
+    Edit the user sentence
+    '''
+    user = User.query.get(uid)
+    language = Language.query.get(lid)
+    if user is None or language not in user.languages:
+        return redirect(url_for('home'))
+    try:
+        sentence = Sentence.query.filter_by(user_id=uid,
+                                            language_id=lid,
+                                            id=sid).one()
+    except NoResultFound:
+        return redirect(url_for('home'))
+
+    if User is None or language not in user.languages \
+    or sentence not in user.sentences:
+        return redirect(url_for('home'))
+    sentence_edit_form = SentenceEditForm(text=sentence.text,
+                                          translation=sentence.translation,
+                                          audio=sentence.audio)
+    if sentence_edit_form.validate_on_submit():
+        text = request.form['text']
+        sentence.text = text
+        sentence.translation = translation
+        sentence.audio = audio
+        db.session.add(sentence)
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('edit_sentence.html', form=sentence_edit_form,
+                                                 user=user,
+                                                 language=language,
+                                                 sentence=sentence)

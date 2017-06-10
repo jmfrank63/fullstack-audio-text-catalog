@@ -13,7 +13,7 @@
 {% endblock %}
 {% block content %}
         <h2>Providers:</h2>
-        <form method="POST" action={{ url_for('login', next=next) }}>
+        <form method="POST" action={{ url_for('login') }}>
             {{ form.csrf_token }}
             {{ form.email.label }} {{ form.email(size=20) }}
             <input type="submit" value="Go">
@@ -25,7 +25,7 @@
             <li>Github</li>
             <li>Twitter</li>
             <li>
-                <a href="{{ url_for('mock_login') }}">Mock login</a>
+                <a href="{{ url_for('list_login') }}">List login</a>
             </li>
         </ul>
 {% endblock %}

@@ -4,10 +4,13 @@ Public language view
 '''
 from atcatalog import app
 from atcatalog.views.users import user_required
-from atcatalog.model.atcmodel import Language, User, Sentence
+from atcatalog.model.atcmodel import db, Language, User, Sentence
 from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required
-from flask import render_template, url_for, request
+from flask import render_template, url_for, request, redirect
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired
 
 
 # Public language
@@ -28,6 +31,7 @@ def language(lid):
     language = Language.query.get(lid)
     sentences = Sentence.query.filter_by(language_id=lid)
     return render_template('language.html',
+
                             language=language,
                             sentences=sentences)
 
@@ -40,10 +44,10 @@ def view_user_language(*args, **kwargs):
     language = Language.query.get(lid)
     return [{'text' : u"{}".format(language.name),
              'url' : u"/user/{}/language/{}/".format(uid, lid)}]
-                            
+
 @app.route('/user/<int:uid>/language/<int:lid>/')
 @user_required
-@register_breadcrumb(app, '.user.language', 'Language', 
+@register_breadcrumb(app, '.user.language', 'Language',
                      dynamic_list_constructor=view_user_language)
 def user_language(uid, lid):
     '''
@@ -55,4 +59,42 @@ def user_language(uid, lid):
     return render_template('user_language.html',
                             language=language,
                             sentences=sentences)
-    
+
+def view_edit_language(*args, **kwargs):
+    ''' Construct a language name for breadcrumbs
+    '''
+    lid = request.view_args['lid']
+    language = Language.query.get(lid)
+    return [{'text' : u"edit {}".format(language.name),
+             'url' : u"/edit_language/{}/".format(lid)}]
+
+class LanguageEditForm(FlaskForm):
+    '''
+    Get the new language name
+    '''
+    name = StringField('Name', validators=[DataRequired()])
+
+@app.route('/user/<int:uid>/edit_language/<int:lid>/', methods=['GET', 'POST'])
+@login_required
+@register_breadcrumb(app, '.edit_language', 'Edit Language',
+                     dynamic_list_constructor=view_edit_language)
+def edit_language(uid, lid):
+    '''
+    Edit the language name
+    Until admin access is added all users are allowed to edit their own lanugage names
+    '''
+    user = User.query.get(uid)
+    language = Language.query.get(lid)
+    if user is None or language not in user.languages:
+        return(redirect(url_for('home')))
+    language_edit_form = LanguageEditForm(name=language.name)
+    if language_edit_form.validate_on_submit():
+        name = request.form['name']
+        language.name = name
+        db.session.add(language)
+        db.session.commit()
+        return(redirect(url_for('home')))
+    return render_template('edit_language.html',
+                            form=language_edit_form,
+                            user=user,
+                            language=language)
