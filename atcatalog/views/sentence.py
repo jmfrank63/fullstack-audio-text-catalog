@@ -4,7 +4,7 @@ Public text views
 '''
 from atcatalog import app
 from atcatalog.views.users import user_required
-from atcatalog.model.atcmodel import Language, User, Sentence
+from atcatalog.model.atcmodel import db, Language, User, Sentence
 from flask import render_template, request, redirect, url_for
 from flask_breadcrumbs import register_breadcrumb
 from flask_wtf import FlaskForm
@@ -144,7 +144,8 @@ class SentenceEditForm(FlaskForm):
     translation = StringField('Translation', validators=[DataRequired()])
     audio = StringField('Audio', validators=[DataRequired()])
 
-@app.route('/user/<int:uid>/language/<int:lid>/edit_sentence/<int:sid>/')
+@app.route('/user/<int:uid>/language/<int:lid>/edit_sentence/<int:sid>/',
+            methods=['GET', 'POST'])
 @user_required
 @register_breadcrumb(app, '.user.language.edit_sentence', 'Edit Sentence',
                      dynamic_list_constructor=view_edit_sentence)
@@ -162,18 +163,13 @@ def edit_sentence(uid, lid, sid):
                                             id=sid).one()
     except NoResultFound:
         return redirect(url_for('home'))
-
-    if User is None or language not in user.languages \
-    or sentence not in user.sentences:
-        return redirect(url_for('home'))
     sentence_edit_form = SentenceEditForm(text=sentence.text,
                                           translation=sentence.translation,
                                           audio=sentence.audio)
     if sentence_edit_form.validate_on_submit():
-        text = request.form['text']
-        sentence.text = text
-        sentence.translation = translation
-        sentence.audio = audio
+        sentence.text = request.form['text']
+        sentence.translation = request.form['translation']
+        sentence.audio = request.form['audio']
         db.session.add(sentence)
         db.session.commit()
         return redirect(url_for('home'))

@@ -9,8 +9,10 @@ from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required
 from flask import render_template, url_for, request, redirect
 from flask_wtf import FlaskForm
+from sqlalchemy.orm.exc import NoResultFound
+from sqlite3 import IntegrityError
 from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, ValidationError
 
 
 # Public language
@@ -75,7 +77,7 @@ class LanguageEditForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
 
 @app.route('/user/<int:uid>/edit_language/<int:lid>/', methods=['GET', 'POST'])
-@login_required
+@user_required
 @register_breadcrumb(app, '.edit_language', 'Edit Language',
                      dynamic_list_constructor=view_edit_language)
 def edit_language(uid, lid):
@@ -85,7 +87,7 @@ def edit_language(uid, lid):
     '''
     user = User.query.get(uid)
     language = Language.query.get(lid)
-    if user is None or language not in user.languages:
+    if language not in user.languages:
         return(redirect(url_for('home')))
     language_edit_form = LanguageEditForm(name=language.name)
     if language_edit_form.validate_on_submit():
@@ -98,3 +100,47 @@ def edit_language(uid, lid):
                             form=language_edit_form,
                             user=user,
                             language=language)
+
+class LanguageAddForm(FlaskForm):
+    '''
+    Get the new language name
+    '''
+    code = StringField('Code', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+
+    def validate_code(form, field):
+        '''
+        Check if name already exists in database
+        '''
+        language_details = LanguageDetails.query.filter_by(code=field.data).first()
+        if language_details:
+            raise ValidationError
+
+    def validate_name(form, field):
+        '''
+        Check if name already exists in database
+        '''
+        language = Language.query.filter_by(name=field.data).first()
+        if language:
+            raise ValidationError
+
+@app.route('/user/<int:uid>/add_language/', methods=['GET', 'POST'])
+@user_required
+@register_breadcrumb(app, '.add_language', 'Add Language')
+def add_language(uid):
+    '''
+    Add a language name
+    '''
+    user = User.query.get(uid)
+    language_add_form = LanguageAddForm()
+    if language_add_form.validate_on_submit():
+        code = request.form['code']
+        name = request.form['name']
+        lang_details = LanguageDetails(code=code,name=name)
+        language = Language(name)
+        db.session.add(language)
+        db.session.commit()
+        return(redirect(url_for('home')))
+    return render_template('add_language.html',
+                            form=language_add_form,
+                            user=user)

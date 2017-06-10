@@ -14,7 +14,7 @@
 {% endblock %}
 {% block content %}
         <h2>Edit your language name:</h2>
-        <form method="POST" action={{ url_for('editlanguage', uid=user.id, lid=language.id) }}>
+        <form method="POST" action={{ url_for('edit_language', uid=user.id, lid=language.id) }}>
             {{ form.csrf_token }}
             {{ form.name.label }} {{ form.name(size=40) }}
             <input type="submit" value="Edit">

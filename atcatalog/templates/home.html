@@ -12,9 +12,10 @@
 {% endblock %}
 {% block content %}
     {% if current_user.is_authenticated %}
-    <a href="{{ url_for('user_languages', uid=current_user.id,) }}">
-        <h2>User Languages:</h2>
-    </a>
+    <h2>User Languages</h2>
+    <form action="{{ url_for('add_language', uid=current_user.id) }}">
+        <input type="submit" value="Add" />
+    </form>
     <ul>
         {% for language in user_languages %}
             <li>

@@ -18,11 +18,11 @@ def home():
     if current_user.is_authenticated:
         user_languages = Language.query.filter(Language.code.in_(current_user.codes)).all()
     else:
-        user_languages = None
+        user_languages = []
     return render_template('home.html',
                             languages=languages,
                             user_languages=user_languages)
-
+    
 @app.route('/list_login')
 def list_login():
     ''' A page showing all users for testing

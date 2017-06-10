@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Add Language{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='add_language.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}
+    {{ super() }}
+{% endblock %}
+{% block headline %}
+    <h1>
+        Add a new language
+    </h1>
+{% endblock %}
+{% block content %}
+        <h2>Enter a new language name</h2>
+        <form method="POST" action={{ url_for('add_language', uid=user.id) }}>
+            {{ form.csrf_token }}
+            {{ form.code.label }} {{ form.code(size=5) }}
+            {{ form.name.label }} {{ form.name(size=40) }}
+            <input type="submit" value="Add">
+        </form>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+{% endblock %}
